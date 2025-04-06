@@ -1,0 +1,72 @@
+.home_banner_area {
+    min-height: 100vh !important;
+    position: relative;
+    overflow: hidden;
+    will-change: transform;
+    
+    .box-banner {
+        background: no-repeat center center;
+        background-size: cover;
+        height: 100vh;
+        position: relative;
+        transition: all 0.5s ease;
+        
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                135deg,
+                rgba(0,0,0,0.3) 0%,
+                rgba(0,0,0,0.5) 100%
+            );
+            z-index: 1;
+        }
+
+        .banner_inner {
+            min-height: 100vh !important;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: clamp(1rem, 5vw, 3rem);
+            transform: translateY(0);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backface-visibility: hidden;
+
+            &:hover {
+                transform: translateY(-10px) scale(1.01);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            height: 90vh;
+            .banner_inner {
+                min-height: 90vh !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            height: 80vh;
+            .banner_inner {
+                min-height: 80vh !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            height: 70vh;
+            .banner_inner {
+                min-height: 70vh !important;
+            }
+        }
+    }
+}
+
+body {
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+}

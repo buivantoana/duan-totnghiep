@@ -1,0 +1,129 @@
+.box-voucher {
+    color: rgb(238, 77, 45);
+    border: 1px solid #c4c4c4;
+    border-left: 0;
+    border-radius: 4px;
+    background-clip: padding-box;
+    background: repeating-linear-gradient(#c4c4c4,#c4c4c4 10px,transparent 0,transparent 30px,#c4c4c4 0,#c4c4c4 42px) 0/1px 100% no-repeat,radial-gradient(circle at 0 20px,transparent,transparent 10px,#c4c4c4 0,#c4c4c4 11px,currentColor 0) 1px 0/100% 42px repeat-y;
+    display: flex;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .content-left {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 140px;
+        justify-content: center;
+        margin: -20px 0 0 15px;
+
+        img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+
+            &:hover {
+                transform: scale(1.05);
+            }
+        }
+
+        span {
+            color: #fff;
+            font-size: 18px;
+            text-align: center;
+            text-transform: uppercase;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            margin-top: 6px;
+        }
+    }
+
+    .border-center {
+        min-width: 1px;
+        background: repeating-linear-gradient(#e5e5e5,#e5e5e5 5px,transparent 0,transparent 10px);
+    }
+
+    .content-right {
+        background-color: #fff;
+        width: 300px;
+        border-radius: 0 4px 4px 0;
+
+        .box-content-right {
+            display: flex;
+            flex-direction: column;
+            margin: 20px 15px;
+
+            .name-voucher {
+                color: #212121;
+                font-size: 1.8rem;
+                font-weight: 600;
+                margin-bottom: 6px;
+            }
+
+            .max-value-voucher {
+                color: #595959;
+                font-size: 1.3rem;
+            }
+
+            .box-percent {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                .wrap-percent {
+                    height: 0.8rem;
+                    border-radius: 2.5rem;
+                    width: 120px;
+                    background: rgba(0,0,0,0.09);
+                    overflow: hidden;
+                    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+
+                    .percent {
+                        height: 100%;
+                        background: linear-gradient(270deg, rgb(238, 77, 45) 0%, rgb(255, 119, 91) 100%);
+                        transition: width 0.3s ease-out;
+                    }
+                }
+
+                .used-percent {
+                    color: rgb(255, 66, 79);
+                    font-size: 1.3rem;
+                    margin-left: 0.5rem;
+                    line-height: 1.5rem;
+                }
+            }
+
+            .btn-voucher {
+                border: 0;
+                outline: none;
+                height: 3.5rem;
+                border-radius: .5rem;
+                background: linear-gradient(135deg, rgb(238, 77, 45) 0%, rgb(255, 88, 58) 100%);
+                font-size: 1.6rem;
+                color: #fff;
+                margin-top: 20px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 6px rgba(238, 77, 45, 0.3);
+
+                &:hover {
+                    background: linear-gradient(135deg, rgb(255, 88, 58) 0%, rgb(238, 77, 45) 100%);
+                    box-shadow: 0 4px 12px rgba(238, 77, 45, 0.4);
+                    transform: translateY(-1px);
+                }
+
+                &:active {
+                    transform: translateY(1px);
+                    box-shadow: 0 2px 4px rgba(238, 77, 45, 0.2);
+                }
+            }
+        }
+    }
+}

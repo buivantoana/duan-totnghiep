@@ -1,0 +1,132 @@
+.about-page .hero-section {
+    background-color: #f8f9fa;
+    padding: 80px 0;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.about-page .hero-section h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.about-page .lead {
+    font-size: 24px;
+    color: #6c757d;
+}
+
+.about-page .section-title {
+    position: relative;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+}
+
+.about-page .section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background-color: #007bff;
+}
+
+.about-page .value-box {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    height: 100%;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.about-page .value-box:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+}
+
+.about-page .stats-section {
+    margin-top: 60px;
+    padding: 70px 0;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 20px;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.03);
+}
+
+.about-page .stat-item h3 {
+    font-size: 3rem;
+    font-weight: 800;
+    background: linear-gradient(45deg, #FF5722, #FF9800);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 15px;
+}
+
+.about-page .stat-item p {
+    color: #666;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.banner-section {
+    width: 100%;
+    height: 400px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 40px;
+}
+
+.banner-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.team-section {
+    padding: 40px 0;
+}
+
+.team-member {
+    text-align: center;
+    margin-bottom: 30px;
+    transition: transform 0.3s ease;
+}
+
+.team-member:hover {
+    transform: translateY(-10px);
+}
+
+.team-member img {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.team-member h4 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.team-member p {
+    color: #6c757d;
+}
+
+.animate-number {
+    animation: countUp 2s ease-out forwards;
+    opacity: 0;
+}
+
+@keyframes countUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

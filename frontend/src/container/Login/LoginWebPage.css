@@ -1,0 +1,201 @@
+.box-login {
+  min-height: 100vh;
+  background: linear-gradient(-45deg, #7b1fa2, #e91e63, #2196f3, #7b1fa2);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+  display: flex;
+  align-items: center;
+}
+
+.login-container {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  overflow: hidden;
+  width: 600px;
+  max-width: 600px;
+  margin: auto;
+  animation: fadeIn 0.8s ease-in;
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease-in-out;
+}
+
+.login-container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 35px rgba(0, 0, 0, 0.3);
+}
+
+.brand {
+  padding: 20px;
+}
+
+.brand .logo {
+  color: #444;
+  font-size: 2em;
+  font-weight: bold;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.brand .logo:hover {
+  color: #e91e63;
+}
+
+.brand .heading h2 {
+  font-size: 2.5em;
+  font-weight: 300;
+  color: #444;
+  margin: 20px 0;
+}
+
+.form {
+  padding: 25px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-group {
+  margin-bottom: 25px;
+  position: relative;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+.form-group label {
+  position: absolute;
+  top: -12px;
+  left: 15px;
+  padding: 2px 8px;
+  background: white;
+  font-size: 13px;
+  color: #777;
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  background: white;
+  transition: all 0.3s ease;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #e91e63;
+  box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.15);
+}
+
+.form-group input:focus ~ label {
+  color: #e91e63;
+  font-weight: 500;
+  transform: translateY(-2px);
+}
+
+.form-group.error input {
+  border-color: #ff3d3d;
+  background-color: rgba(255, 61, 61, 0.02);
+}
+
+.form-group.error label {
+  color: #ff3d3d;
+}
+
+.form-group.success input {
+  border-color: #28a745;
+  background-color: rgba(40, 167, 69, 0.02);
+}
+
+.form-group.success label {
+  color: #28a745;
+}
+
+.CTA {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.CTA input[type="submit"] {
+  background: linear-gradient(45deg, #e91e63, #7b1fa2);
+  color: white;
+  border: none;
+  padding: 12px 35px;
+  border-radius: 50px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.CTA input[type="submit"]:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 7px 20px rgba(233, 30, 99, 0.4);
+}
+
+.CTA input[type="submit"]:active {
+  transform: translateY(-1px);
+}
+
+.CTA .switch {
+  color: #e91e63;
+  margin-left: 15px;
+  transition: all 0.3s ease;
+}
+
+.CTA .switch:hover {
+  color: #c2185b;
+  text-decoration: underline;
+}
+
+/* Các lớp hoạt ảnh */
+.form-peice {
+  transition: all 0.5s ease;
+}
+
+.form-peice.switched {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+.login.form-peice.switched {
+  transform: translateX(100%);
+}
+
+/* Tùy chỉnh nút mạng xã hội */
+.social-button {
+  transition: transform 0.3s ease !important;
+}
+
+.social-button:hover {
+  transform: translateY(-2px) !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}

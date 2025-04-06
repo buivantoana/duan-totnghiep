@@ -1,0 +1,97 @@
+.feature_product_area {
+    padding: 60px 0;
+    background: #f6f6f6;
+
+    .box-productFeature {
+        position: relative;
+        padding: 20px 0;
+
+        .slick-slider {
+            .slick-list {
+                margin: 0 -15px;
+            }
+
+            .slick-slide {
+                padding: 0 15px;
+            }
+
+            .slick-arrow {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 1;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: #fff;
+                box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+                transition: all 0.2s ease-in-out;
+                opacity: 0.8;
+                cursor: pointer;
+
+                &:hover {
+                    opacity: 1;
+                    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.25);
+                }
+
+                &.slick-prev {
+                    left: -25px;
+                }
+
+                &.slick-next {
+                    right: -25px;
+                }
+            }
+        }
+
+        .item-product {
+            transition: all 0.3s ease-in-out;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 10px;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            
+            &:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+
+                img {
+                    transform: scale(1.05);
+                }
+            }
+
+            img {
+                transition: transform 0.3s ease;
+                width: 100%;
+                height: auto;
+                object-fit: cover;
+            }
+        }
+    }
+}
+
+@media (max-width: 1200px) {
+    .feature_product_area {
+        .box-productFeature {
+            .slick-slider {
+                .slick-arrow {
+                    &.slick-prev {
+                        left: 0;
+                    }
+                    &.slick-next {
+                        right: 0;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .feature_product_area {
+        padding: 40px 0;
+    }
+}
