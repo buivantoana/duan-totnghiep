@@ -33,8 +33,8 @@ function HomePage(props) {
         //     fetchProductRecommend(userData.id)
 
         // }
-        // fetchBlogFeature()
-        // fetchDataBrand()
+        fetchBlogFeature()
+        fetchDataBrand()
         // fetchProductFeature()
         fetchProductNew()
         fetchRank()

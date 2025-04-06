@@ -915,6 +915,7 @@ let getProductNew = (limit) => {
     return new Promise(async (resolve, reject) => {
         try {
             let res = await db.Product.findAll({
+                where: { statusId: "S1" },
                 include: [
                     { model: db.Allcode, as: 'brandData', attributes: ['value', 'code'] },
                     { model: db.Allcode, as: 'categoryData', attributes: ['value', 'code'] },
