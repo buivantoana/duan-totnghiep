@@ -1,5 +1,9 @@
 import React from 'react';
 import './Footer.css';
+import logo from "../../images/logo.png"
+import mastercard from "../../images/MasterCard.png"
+import paypal from "../../images/paypal.svg"
+import visa from "../../images/visa.svg"
 
 function Footer() {
   return (
@@ -8,7 +12,7 @@ function Footer() {
         <div className="footer-content">
           <div className="footer-section company-info">
             <div className="footer-logo">
-              <img src="resources/img/logo.png" alt="Sneaker Hubs Logo" />
+              <img src={logo} alt="Sneaker Hubs Logo" />
             </div>
             <p> Chất lượng tạo nên thương hiệu. Chúng tôi cam kết mang đến những sản phẩm và dịch vụ xuất sắc, giúp khách hàng trải nghiệm sự hoàn hảo.</p>
             <div className="contact-info">
@@ -61,9 +65,9 @@ function Footer() {
 
         <div className="footer-bottom">
           <div className="payment-methods">
-            <img src="resources/img/visa.svg" alt="Visa" />
-            <img src="resources/img/Mastercard.png" alt="Mastercard" />
-            <img src="resources/img/paypal.svg" alt="PayPal" />
+            <img src={visa} alt="Visa" />
+            <img src={mastercard} alt="Mastercard" />
+            <img src={paypal} alt="PayPal" />
           </div>
           <p>&copy; 2025 Your Company Sneakerhubs. All rights reserved.</p>
         </div>
