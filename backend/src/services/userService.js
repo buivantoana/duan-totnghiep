@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import emailService from "./emailService";
 import { v4 as uuidv4 } from 'uuid';
 import CommonUtils from '../utils/CommonUtils';
-const { Op } = require("sequelize");
+const { Op,Sequelize } = require("sequelize");
 require('dotenv').config();
 const salt = bcrypt.genSaltSync(10);
 
@@ -96,7 +96,8 @@ let deleteUser = (userId) => {
                 })
             } else {
                 let foundUser = await db.User.findOne({
-                    where: { id: userId }
+                    where: { id: userId },
+                    raw: false
                 })
                 if (!foundUser) {
                     resolve({
@@ -104,12 +105,11 @@ let deleteUser = (userId) => {
                         errMessage: `The user isn't exist`
                     })
                 }
-                await db.User.destroy({
-                    where: { id: userId }
-                })
+                foundUser.statusId = foundUser.statusId == "S1" ? "S2":"S1"
+                await foundUser.save()
                 resolve({
                     errCode: 0,
-                    message: `The user is deleted`
+                    message: `Hủy kích hoạt người dùng `
                 })
             }
 
@@ -177,10 +177,15 @@ let handleLogin = (data) => {
 
                 if (isExist === true) {
                     let user = await db.User.findOne({
-                        attributes: ['email', 'roleId', 'password', 'firstName', 'lastName', 'id', 'points'],
-                        where: { email: data.email, statusId: 'S1' },
+                        attributes: ['email', 'roleId', 'password', 'firstName', 'lastName', 'id', 'points','statusId'],
+                        where: { email: data.email },
                         raw: true
                     })
+                    console.log(user)
+                    if(user && user.statusId == "S2"){
+                        console.log("toanlogin")
+                        resolve({errCode :1, errMessage:"Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên để biết thêm chi tiết." })
+                    }
                     if (user) {
                         let check = await bcrypt.compareSync(data.password, user.password);
                         if (check) {
@@ -253,7 +258,6 @@ let getAllUser = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
             let objectFilter = {
-                where: { statusId: 'S1' },
                 attributes: {
                     exclude: ['password', 'image']
                 },
@@ -282,6 +286,32 @@ let getAllUser = (data) => {
         }
     })
 }
+let topUserOrder = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let res = await db.User.findAll({
+                include: [
+                    {
+                        model: db.OrderProduct,
+                        as: 'orders', // Alias khớp với quan hệ trong User
+                       
+                    }
+                ],
+                raw: false, 
+                nest:true
+                
+            });
+
+            resolve({
+                errCode: 0,
+                data: res,
+            });
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
 let getDetailUserById = (userid) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -556,5 +586,6 @@ module.exports = {
     handleVerifyEmailUser: handleVerifyEmailUser,
     handleSendEmailForgotPassword: handleSendEmailForgotPassword,
     handleForgotPassword: handleForgotPassword,
-    checkPhonenumberEmail: checkPhonenumberEmail
+    checkPhonenumberEmail: checkPhonenumberEmail,
+    topUserOrder
 }

@@ -38,6 +38,9 @@ module.exports = {
             note: {
                 type: Sequelize.STRING
             },
+            statusHistory: {
+                type: Sequelize.STRING
+            },
             isPaymentOnlien: {
                 type: Sequelize.INTEGER
             },

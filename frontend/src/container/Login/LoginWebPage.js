@@ -33,7 +33,7 @@ const LoginWebPage = () => {
             password: inputValues.password
         })
 
-
+        console.log(res)
         if (res && res.errCode === 0) {
 
 

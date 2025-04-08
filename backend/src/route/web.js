@@ -42,6 +42,7 @@ let initwebRoutes = (app) => {
     router.post('/api/forgotpassword-email', userController.handleForgotPassword)
     router.get('/api/check-phonenumber-email', userController.checkPhonenumberEmail)
     router.get('/api/get-detail-user-by-email', userController.getDetailUserByEmail)
+    router.get('/api/get-top-order-user', userController.topUserOrder)
     //===================API ALLCODE========================//
     router.post('/api/create-new-all-code', middlewareControllers.verifyTokenAdmin, allcodeController.handleCreateNewAllCode)
     router.put('/api/update-all-code', middlewareControllers.verifyTokenAdmin, allcodeController.handleUpdateAllCode)

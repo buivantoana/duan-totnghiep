@@ -5,6 +5,10 @@ const getAllUsers = (data) => {
     return axios.get(`/api/get-all-user?limit=${data.limit}&offset=${data.offset}&keyword=${data.keyword}`)
 
 }
+const getTopUsersOrder = (data) => {
+    return axios.get(`/api/get-top-order-user?limit=${data.limit}`)
+
+}
 const createNewUser = (data) => {
     return axios.post(`/api/create-new-user`, data)
 
@@ -459,5 +463,5 @@ export {
     getStatisticByMonth, getStatisticByDay, checkPhonenumberEmail, createNewSupplierService, updateSupplierService, deleteSupplierService, getDetailSupplierByIdService,
     getAllSupplier, createNewReceiptService, getAllReceipt, getDetailReceiptByIdService, deleteReceiptService, updateReceiptService, createNewReceiptDetailService,
     getStatisticOverturn, getStatisticProfit, getProductShopcartService, getDetailUserByEmail, getProductRecommendService,
-    getStatisticStockProduct, getExchangeRate, paymentOrderVnpayService, confirmOrderVnpay, paymentOrderVnpaySuccessService, getAllProducts, searchOrder, getRank
+    getStatisticStockProduct, getExchangeRate, paymentOrderVnpayService, confirmOrderVnpay, paymentOrderVnpaySuccessService, getAllProducts, searchOrder, getRank,getTopUsersOrder
 }

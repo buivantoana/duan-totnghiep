@@ -53,6 +53,8 @@ import AddColor from './Color/AddColor';
 import ManageColor from './Color/ManageColor';
 import AddProductVariant from './ProductVariant/AddProductVariant';
 import ManageProductVariant from './ProductVariant/ManageProductVariant';
+import ProductOrder from './Statistic/ProductOrder';
+import UserOrder from './Statistic/UserOrder';
 
 function HomePageAdmin(props) {
     return (
@@ -239,6 +241,12 @@ function HomePageAdmin(props) {
                                 </Route>
                                 <Route exact path="/admin/stock-product">
                                     <StockProduct />
+                                </Route>
+                                <Route exact path="/admin/product-order">
+                                    <ProductOrder />
+                                </Route>
+                                <Route exact path="/admin/user-order">
+                                    <UserOrder />
                                 </Route>
                             </main>
                             <Footer />

@@ -224,6 +224,8 @@ const SideBar = () => {
 
                                         <Link to={'/admin/profit'} className="nav-link" >Thống kê lợi nhuận</Link>
                                         <Link to={'/admin/stock-product'} className="nav-link" >Thống kê tồn kho</Link>
+                                        <Link to={'/admin/user-order'} className="nav-link" >Top người dùng đặt hàng</Link>
+                                        <Link to={'/admin/product-order'} className="nav-link" >Top sản phẩm đặt hàng</Link>
 
 
                                     </nav>

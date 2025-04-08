@@ -42,7 +42,7 @@ const ManageUser = () => {
 
         let res = await DeleteUserService(id)
         if (res && res.errCode === 0) {
-            toast.success("Xóa người dùng thành công")
+            toast.success("Hủy kích hoạt người dùng ")
             let user = await getAllUsers({
                 limit: PAGINATION.pagerow,
                 offset: numberPage * PAGINATION.pagerow,
@@ -144,7 +144,7 @@ const ManageUser = () => {
                                                 <td>
                                                     <Link to={`/admin/edit-user/${item.id}`}>Edit</Link>
                                                     &nbsp; &nbsp;
-                                                    <a href="#" onClick={(event) => handleBanUser(event, item.id)} >Delete</a>
+                                                    <a href="#" onClick={(event) => handleBanUser(event, item.id)} >{item.statusId == "S1" ? "Deactive" :"Active"}</a>
                                                 </td>
                                             </tr>
                                         )

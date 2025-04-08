@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
                 targetKey: 'id', // 'id' là khóa chính trong bảng Address
                 as: 'addressData'
             });
-            OrderProduct.belongsTo(models.User, { foreignKey: 'userId', as: 'user' });
+            OrderProduct.belongsTo(models.User, { foreignKey: 'userId', as: 'orders' });
         }
     };
     OrderProduct.init({
@@ -29,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
         points: DataTypes.INTEGER,
         userId: DataTypes.INTEGER,
         statusId: DataTypes.STRING,
+        statusHistory:DataTypes.STRING,
         typeShipId: DataTypes.INTEGER,
         voucherId: DataTypes.INTEGER,
         note: DataTypes.STRING,

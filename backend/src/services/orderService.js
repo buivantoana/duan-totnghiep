@@ -258,8 +258,15 @@ let updateStatusOrder = (data) => {
                 });
             }
 
-            // Cập nhật trạng thái đơn hàng
+            let history = order.statusHistory? JSON.parse(order.statusHistory) : [];
+
+           
+            history.push({
+                statusId: order.statusId,
+                updatedAt: new Date().toISOString(),
+            });
             order.statusId = data.statusId;
+            order.statusHistory = JSON.stringify(history);
             await order.save();
 
             // Nếu đơn bị hủy -> cộng lại số lượng tồn kho
@@ -397,6 +404,7 @@ let getAllOrdersByUser = (userId) => {
                         { model: db.OrderDetail, as: 'OrderDetails' },
 
                     ],
+                    order: [['createdAt', 'DESC']],
                     raw: false,
                     nest: false
                 })

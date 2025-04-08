@@ -177,3 +177,56 @@
          }
      }
  }
+
+ .timeline {
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    padding: 0;
+    margin: 10px 0;
+    position: relative;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    background: #ccc;
+    z-index: 0;
+}
+
+.timeline li {
+    z-index: 1;
+    position: relative;
+    padding: 5px 10px;
+    background: #e9ecef;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #666;
+}
+
+.timeline li.active {
+    background: #198754;
+    color: white;
+    font-weight: bold;
+}
+.status-history {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 10px;
+
+    h6 {
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .list-group-item {
+        padding: 8px 12px;
+        font-size: 14px;
+        border: none;
+    }
+}
