@@ -80,6 +80,7 @@ let initwebRoutes = (app) => {
     router.get('/api/get-product-new', productController.getProductNew)
     router.get('/api/get-product-shopcart', productController.getProductShopCart)
     router.get('/api/get-product-recommend', productController.getProductRecommend)
+    router.get('/api/get-product-top', productController.getTopSellingProducts)
     //==================API BANNER=============================//
     router.post('/api/create-new-banner', middlewareControllers.verifyTokenAdmin, bannerController.createNewBanner)
     router.get('/api/get-detail-banner', bannerController.getDetailBanner)

@@ -207,6 +207,44 @@ let getAllProductUser = (data) => {
     });
 }
 
+const getTopSellingProducts = async ({ limit = 5, sortType = 'desc' }) => {
+    try {
+        const topProducts = await db.OrderDetail.findAll({
+            attributes: [
+                'productId',
+                [db.Sequelize.fn('SUM', db.Sequelize.col('quantity')), 'totalSold']
+            ],
+            include: [
+                {
+                    model: db.Product,
+                    as: 'productOrder',
+                    attributes: ['id', 'name', 'image', 'brandId', 'categoryId'],
+                    include: [
+                        { model: db.Allcode, as: 'brandData', attributes: ['value'] },
+                        { model: db.Allcode, as: 'categoryData', attributes: ['value'] }
+                    ]
+                }
+            ],
+            group: ['productId'],
+            order: [[db.Sequelize.literal('totalSold'), sortType]],
+            limit: Number(limit),
+            raw: false,
+            nest: true
+        });
+
+        return {
+            errCode: 0,
+            data: topProducts
+        };
+
+    } catch (error) {
+        console.error("Error getTopSellingProducts:", error);
+        return {
+            errCode: 1,
+            errMessage: 'Error getting top selling products'
+        };
+    }
+};
 let UnactiveProduct = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -1115,5 +1153,6 @@ module.exports = {
     getProductNew: getProductNew,
     getProductShopCart: getProductShopCart,
     getProductRecommend: getProductRecommend,
-    getAllProducts
+    getAllProducts,
+    getTopSellingProducts
 }

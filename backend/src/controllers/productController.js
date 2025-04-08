@@ -325,6 +325,18 @@ let getProductRecommend = async (req, res) => {
         })
     }
 }
+let getTopSellingProducts = async (req, res) => {
+    try {
+        let data = await productService.getTopSellingProducts(req.query);
+        return res.status(200).json(data);
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server'
+        })
+    }
+}
 module.exports = {
     createNewProduct: createNewProduct,
     getAllProductAdmin: getAllProductAdmin,
@@ -352,5 +364,6 @@ module.exports = {
     getProductNew: getProductNew,
     getProductShopCart: getProductShopCart,
     getProductRecommend: getProductRecommend,
-    getAllProducts
+    getAllProducts,
+    getTopSellingProducts
 }

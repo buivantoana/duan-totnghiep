@@ -150,6 +150,9 @@ const createNewProductSizeService = (data) => {
 const getProductDetailSizeByIdService = (id) => {
     return axios.get(`/api/get-detail-product-detail-size-by-id?id=${id}`)
 }
+const getTopSellingProducts = (data) => {
+    return axios.get(`/api/get-product-top?limit=${data.limit}&sortType=${data.sortType}`)
+}
 const UpdateProductDetailSizeService = (data) => {
     return axios.put(`/api/update-product-detail-size`, data)
 }
@@ -463,5 +466,5 @@ export {
     getStatisticByMonth, getStatisticByDay, checkPhonenumberEmail, createNewSupplierService, updateSupplierService, deleteSupplierService, getDetailSupplierByIdService,
     getAllSupplier, createNewReceiptService, getAllReceipt, getDetailReceiptByIdService, deleteReceiptService, updateReceiptService, createNewReceiptDetailService,
     getStatisticOverturn, getStatisticProfit, getProductShopcartService, getDetailUserByEmail, getProductRecommendService,
-    getStatisticStockProduct, getExchangeRate, paymentOrderVnpayService, confirmOrderVnpay, paymentOrderVnpaySuccessService, getAllProducts, searchOrder, getRank,getTopUsersOrder
+    getStatisticStockProduct, getExchangeRate, paymentOrderVnpayService, confirmOrderVnpay, paymentOrderVnpaySuccessService, getAllProducts, searchOrder, getRank, getTopUsersOrder, getTopSellingProducts
 }
