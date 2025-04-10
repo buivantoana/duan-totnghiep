@@ -219,11 +219,17 @@ const Header = props => {
                                                     <ul style={{ margin: "0 !important" }}>
                                                         {favorites.length > 0 ? (
                                                             favorites.map((item) => (
-                                                                <li key={item.id} className="favorite-item" style={{ cursor: "pointer", margin: 0 }}>
-                                                                    <img src={item.product.image} alt={item.product.name} />
-                                                                    <div className="product-info">
-                                                                        <span>{item.product.name}</span>
-                                                                    </div>
+                                                                <li key={item.id} className="favorite-item" style={{ cursor: "pointer", margin: 0, display: "flex", justifyContent: "space-between" }}>
+                                                                    <Link to={`/detail-product/${item.productId}`} style={{ width: "80%" }}>
+                                                                        <div style={{ display: "flex", gap: "10px" }}>
+                                                                            <img src={item.product.image} alt={item.product.name} />
+                                                                            <div className="product-info">
+                                                                                <span>{item.product.name}</span>
+                                                                            </div>
+
+                                                                        </div>
+
+                                                                    </Link>
                                                                     <button
                                                                         className="remove-btn"
                                                                         onClick={() => handleRemoveFavorite(item.product.id)}
