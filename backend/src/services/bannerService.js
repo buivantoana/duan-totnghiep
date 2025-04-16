@@ -54,8 +54,13 @@ let getDetailBanner = (id) => {
 let getAllBanner = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
+            const whereCondition = {};
+
+            if (data.type == "true") {
+                    whereCondition.statusId = 'S1';
+            }
             let objectFilter = {
-                where: { statusId: 'S1' },
+                where: whereCondition,
              
             }
             if (data.limit && data.offset) {
@@ -121,12 +126,12 @@ let deleteBanner = (data) => {
                 })
             } else {
                 let banner = await db.Banner.findOne({
-                    where: { id: data.id }
+                    where: { id: data.id },
+                    raw:false
                 })
                 if (banner) {
-                    await db.Banner.destroy({
-                        where: { id: data.id }
-                    })
+                    banner.statusId = banner.statusId == "S1" ? "S2" : "S1"
+                await banner.save()
                     resolve({
                         errCode: 0,
                         errMessage: 'ok'

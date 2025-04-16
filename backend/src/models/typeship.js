@@ -11,7 +11,11 @@ module.exports = (sequelize, DataTypes) => {
     };
     TypeShip.init({
         type: DataTypes.STRING,
-        price: DataTypes.BIGINT
+        price: DataTypes.BIGINT,
+        status: {
+            type: DataTypes.STRING,
+            defaultValue: 'S1', 
+        }
     }, {
         sequelize,
         modelName: 'TypeShip',

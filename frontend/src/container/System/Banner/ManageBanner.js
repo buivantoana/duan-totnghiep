@@ -56,7 +56,7 @@ const ManageBanner = () => {
             }
         })
         if (response && response.errCode === 0) {
-            toast.success("Xóa băng rôn thành công !")
+            toast.success("Thay đổi trạng thái băng rôn thành công !")
             let arrData = await getAllBanner({
 
 
@@ -69,7 +69,7 @@ const ManageBanner = () => {
                 setCount(Math.ceil(arrData.count / PAGINATION.pagerow))
             }
         } else {
-            toast.error("Xóa băng rôn thất bại")
+            toast.error("Thay đổi trạng thái băng rôn thất bại")
         }
     }
     let handleChangePage = async (number) => {
@@ -155,7 +155,7 @@ const ManageBanner = () => {
                                                     <Link to={`/admin/edit-banner/${item.id}`}>Edit</Link>
                                                     &nbsp; &nbsp;
 
-                                                    <span onClick={() => handleDeleteBanner(item.id)} style={{ color: '#0E6DFE', cursor: 'pointer' }} >Delete</span>
+                                                    <span onClick={() => handleDeleteBanner(item.id)} style={{ color: '#0E6DFE', cursor: 'pointer' }} >{item.statusId == "S1"?"Deactive":"Active"}</span>
 
 
                                                 </td>

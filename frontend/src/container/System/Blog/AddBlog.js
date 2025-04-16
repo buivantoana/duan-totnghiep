@@ -83,6 +83,10 @@ const AddBlog = (props) => {
         setInputValues({ ...inputValues, ["isOpen"]: true });
     };
     let handleSaveBlog = async () => {
+        if (!inputValues.title || !inputValues.shortdescription || !inputValues.image || !inputValues.contentMarkdown || !inputValues.subjectId) {
+            toast.error("Vui lòng điền đầy đủ thông tin!");
+            return;
+        }
         if (inputValues.isActionADD === true) {
             let res = await createNewBlogrService({
                 shortdescription: inputValues.shortdescription,

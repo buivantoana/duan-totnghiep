@@ -9,7 +9,11 @@ module.exports = (sequelize, DataTypes) => {
     };
     Color.init({
         name: DataTypes.STRING, // VD: "Red", "Blue", "Black"
-        hexCode: DataTypes.STRING // VD: "#FF0000" (Mã màu)
+        hexCode: DataTypes.STRING,
+        status: {
+            type: DataTypes.STRING,
+            defaultValue: 'S1', 
+        } // VD: "#FF0000" (Mã màu)
     }, {
         sequelize,
         modelName: 'Color',

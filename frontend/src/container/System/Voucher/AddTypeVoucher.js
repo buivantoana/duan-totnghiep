@@ -46,6 +46,26 @@ const AddTypeVoucher = (props) => {
 
     };
     let handleSaveTypeVoucher = async () => {
+        if (!inputValues.typeVoucher || !inputValues.value || !inputValues.maxValue || !inputValues.minValue) {
+            toast.error("Tất cả các trường đều là bắt buộc!");
+            return;
+        }
+    
+        // Kiểm tra giá trị phải là số và không âm
+        if (isNaN(inputValues.value) || Number(inputValues.value) < 0) {
+            toast.error("Giá trị phải là số và không được âm!");
+            return;
+        }
+    
+        if (isNaN(inputValues.minValue) || Number(inputValues.minValue) < 0) {
+            toast.error("Giá trị tối thiểu phải là số và không được âm!");
+            return;
+        }
+    
+        if (isNaN(inputValues.maxValue) || Number(inputValues.maxValue) < 0) {
+            toast.error("Giá trị tối đa phải là số và không được âm!");
+            return;
+        }
         if (isActionADD === true) {
             let res = await createNewTypeVoucherService({
                 typeVoucher: inputValues.typeVoucher,

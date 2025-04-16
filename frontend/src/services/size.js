@@ -2,9 +2,9 @@ import axios from "../axios"; // Thay bằng URL backend của bạn
 
 const sizeService = {
    // 📌 Lấy danh sách sizes
-   getAllSizes: async () => {
+   getAllSizes: async (type) => {
       try {
-         const response = await axios.get("/api/size");
+         const response = await axios.get(`/api/size?type=${type}`);
          return response.data;
       } catch (error) {
          console.error('Error fetching sizes:', error);

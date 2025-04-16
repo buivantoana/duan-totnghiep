@@ -71,7 +71,29 @@ const Adduser = (props) => {
         setisChangeDate(true)
 
     }
+    let validateInput = () => {
+        const requiredFields = ['email', 'firstName', 'lastName', 'address', 'phonenumber', 'genderId', 'roleId'];
+        for (let field of requiredFields) {
+            if (!inputValues[field] || inputValues[field].trim() === '') {
+                toast.error(`Vui lòng nhập đầy đủ thông tin: ${field}`);
+                return false;
+            }
+        }
+    
+        if (isActionADD && (!inputValues.password || inputValues.password.trim() === '')) {
+            toast.error("Vui lòng nhập mật khẩu");
+            return false;
+        }
+    
+        if (!birthday) {
+            toast.error("Vui lòng chọn ngày sinh");
+            return false;
+        }
+    
+        return true;
+    }
     let handleSaveUser = async () => {
+        if (!validateInput()) return;
         if (isActionADD === true) {
             let res = await createNewUser({
                 email: inputValues.email,

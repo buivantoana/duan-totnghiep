@@ -34,10 +34,10 @@ const ManageColor = () => {
         event.preventDefault();
         let res = await colorService.deleteColor(id);
         if (res && res.code == 200) {
-            toast.success("Xóa màu thành công");
+            toast.success("Thay đổi trạng thái màu thành công");
             fetchData(); // Tải lại dữ liệu sau khi xóa
         } else {
-            toast.error("Xóa màu thất bại");
+            toast.error("Thay đổi trạng thái màu thất bại");
         }
     };
 
@@ -112,7 +112,7 @@ const ManageColor = () => {
                                             <td>
                                                 <Link to={`/admin/edit-color/${item.id}`}>Edit</Link>
                                                 &nbsp; &nbsp;
-                                                <a href="#" onClick={(event) => handleDeleteColor(event, item.id)}>Delete</a>
+                                                <a href="#" onClick={(event) => handleDeleteColor(event, item.id)}>{item.status == "S1" ? "Deactive": "Active"}</a>
                                             </td>
                                         </tr>
                                     ))

@@ -71,6 +71,10 @@ const AddBanner = (props) => {
         setInputValues({ ...inputValues, ["isOpen"]: true });
     };
     let handleSaveBanner = async () => {
+        if (!inputValues.name || !inputValues.description || !inputValues.image) {
+            toast.error("Vui lòng nhập đầy đủ thông tin!");
+            return;
+        }
         if (inputValues.isActionADD === true) {
             let res = await createNewBannerService({
                 name: inputValues.name,

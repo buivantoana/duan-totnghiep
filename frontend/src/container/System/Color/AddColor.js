@@ -40,6 +40,15 @@ const AddColor = () => {
     };
 
     const handleSaveColor = async () => {
+        if (inputValues.name.trim() === '') {
+            toast.error("Tên màu là bắt buộc");
+            return;
+        }
+    
+        if (inputValues.hexCode.trim() === '') {
+            toast.error("Mã màu là bắt buộc");
+            return;
+        }
         if (isActionADD) {
             console.log(inputValues);
             let res = await colorService.createColor(inputValues.name, inputValues.hexCode);

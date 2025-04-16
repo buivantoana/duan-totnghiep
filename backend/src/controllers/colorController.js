@@ -3,7 +3,7 @@ const colorService = require('../services/colorServices');
 // 📌 Lấy danh sách color
 const getAllColors = async (req, res) => {
    try {
-      const colors = await colorService.getAllColors();
+      const colors = await colorService.getAllColors(req.query.type);
       return res.status(200).json({ code: 200, message: "Success", data: colors });
    } catch (error) {
       return res.status(500).json({ code: 500, message: error.message });

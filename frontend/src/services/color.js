@@ -2,9 +2,9 @@ import axios from "../axios"; // Thay bằng URL backend của bạn
 
 const colorService = {
    // 📌 Lấy danh sách sizes
-   getAllColor: async () => {
+   getAllColor: async (type) => {
       try {
-         const response = await axios.get("/api/color");
+         const response = await axios.get(`/api/color?type=${type}`);
          return response.data;
       } catch (error) {
          console.error('Error fetching Color:', error);

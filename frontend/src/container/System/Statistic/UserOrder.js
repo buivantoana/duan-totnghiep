@@ -28,12 +28,10 @@ const UserOrder = () => {
 
     return (
         <div className="container-fluid px-4">
-            <h1 className="mt-4">Top người dùng đặt hàng</h1>
-
             <div className="card mb-4">
                 <div className="card-header d-flex justify-content-between align-items-center">
                     <div>
-                        <i className="fas fa-table me-1" /> Danh sách
+                        <i className="fas fa-table me-1" /> Danh sách top người dùng đặt hàng 
                     </div>
                     <div className="d-flex align-items-center gap-3">
                         <select className="form-select w-auto" value={limit} onChange={handleLimitChange}>

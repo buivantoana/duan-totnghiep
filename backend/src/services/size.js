@@ -1,8 +1,13 @@
 const { Size } = require('../models');
 
 // 📌 Lấy danh sách size
-const getAllSizes = async () => {
-   return await Size.findAll();
+const getAllSizes = async (type) => {
+   const whereCondition = {};
+
+   if (type == "true") {
+     whereCondition.status = 'S1';
+   }
+   return await Size.findAll({where:whereCondition});
 };
 
 const getDetailSizes = async (id) => {
@@ -51,7 +56,8 @@ const deleteSize = async (id) => {
    });
    if (!size) throw new Error('Size not found');
 
-   await size.destroy();
+   size.status = size.status == "S1" ? "S2" : "S1"
+                await size.save()
    return { message: 'Size deleted successfully' };
 };
 

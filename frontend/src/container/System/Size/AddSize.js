@@ -45,6 +45,10 @@ const AddSize = (props) => {
 
     };
     let handleSaveCategory = async () => {
+        if (inputValues.name === "" || Number(inputValues.name) < 0) {
+            toast.error("Size là bắt buộc và không được nhỏ hơn 0");
+            return;
+        }
         if (isActionADD === true) {
             let res = await sizeService.createSize(inputValues.name)
             console.log(res);

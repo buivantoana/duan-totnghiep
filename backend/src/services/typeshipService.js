@@ -50,12 +50,17 @@ let getDetailTypeshipById = (id) => {
 let getAllTypeship = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
+            const whereCondition = {};
+
+            if (data.type == "true") {
+              whereCondition.status = 'S1';
+            }
             let objectFilter = {}
             if (data.limit && data.offset) {
                 objectFilter.limit = +data.limit
                 objectFilter.offset = +data.offset
             }
-            if(data.keyword !=='') objectFilter.where = {...objectFilter.where, type: {[Op.substring]: data.keyword  } }
+            if(data.keyword !=='') objectFilter.where = {...objectFilter.where, type: {[Op.substring]: data.keyword,...whereCondition  } }
             let res = await db.TypeShip.findAndCountAll(objectFilter)
 
             resolve({
@@ -110,12 +115,12 @@ let deleteTypeship = (data) => {
                 })
             } else {
                 let typeship = await db.TypeShip.findOne({
-                    where: { id: data.id }
+                    where: { id: data.id },
+                    raw:false
                 })
                 if (typeship) {
-                    await db.TypeShip.destroy({
-                        where: { id: data.id }
-                    })
+                    typeship.status = typeship.status == "S1" ? "S2" : "S1"
+                await typeship.save()
                     resolve({
                         errCode: 0,
                         errMessage: 'ok'

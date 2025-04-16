@@ -1,8 +1,14 @@
+const { where } = require('sequelize');
 const { Color } = require('../models');
 
 // 📌 Lấy danh sách color
-const getAllColors = async () => {
-   return await Color.findAll();
+const getAllColors = async (type) => {
+   const whereCondition = {};
+
+   if (type == "true") {
+     whereCondition.status = 'S1';
+   }
+   return await Color.findAll({where:whereCondition});
 };
 
 // 📌 Lấy chi tiết color
@@ -48,7 +54,8 @@ const deleteColor = async (id) => {
    });
    if (!color) throw new Error('Color not found');
 
-   await color.destroy();
+   color.status = color.status == "S1" ? "S2" : "S1"
+                await color.save()
    return { message: 'Color deleted successfully' };
 };
 

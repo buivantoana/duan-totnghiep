@@ -3,7 +3,7 @@ const sizeService = require('../services/size');
 // 📌 Lấy danh sách size
 const getAllSizes = async (req, res) => {
    try {
-      const sizes = await sizeService.getAllSizes();
+      const sizes = await sizeService.getAllSizes(req.query.type);
       return res.status(200).json({ code: 200, message: "Success", data: sizes });
    } catch (error) {
       return res.status(500).json({ code: 500, message: error.message });

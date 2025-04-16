@@ -18,6 +18,9 @@ import { Link } from 'react-router-dom';
 import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
+import StockProduct from './Statistic/StockProduct';
+import ProductOrder from './Statistic/ProductOrder';
+import UserOrder from './Statistic/UserOrder';
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -308,6 +311,10 @@ const Home = () => {
           <Bar options={getOptions('Biểu đồ doanh thu theo từng ngày trong tháng')} data={dataBar} />
         </div>
 
+      </div>
+      <div>
+        <div><ProductOrder/></div>
+        <div><UserOrder/></div>
       </div>
     </div>
   )

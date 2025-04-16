@@ -34,10 +34,10 @@ const ManageSize = () => {
         event.preventDefault();
         let res = await sizeService.deleteSize(id);
         if (res && res.code == 200) {
-            toast.success("Xóa Size thành công");
-            fetchData(); // Tải lại dữ liệu sau khi xóa
+            toast.success("Thay đổi trạng thái Size thành công");
+            fetchData(); // Tải lại dữ liệu sau khi Thay đổi trạng thái
         } else {
-            toast.error("Xóa Size thất bại");
+            toast.error("Thay đổi trạng thái Size thất bại");
         }
     };
 
@@ -102,7 +102,7 @@ const ManageSize = () => {
                                             <td>
                                                 <Link to={`/admin/edit-size/${item.id}`}>Edit</Link>
                                                 &nbsp; &nbsp;
-                                                <a href="#" onClick={(event) => handleDeleteCategory(event, item.id)}>Delete</a>
+                                                <a href="#" onClick={(event) => handleDeleteCategory(event, item.id)}>{item.status == "S1" ? "Deactive":"Active"}</a>
                                             </td>
                                         </tr>
                                     ))

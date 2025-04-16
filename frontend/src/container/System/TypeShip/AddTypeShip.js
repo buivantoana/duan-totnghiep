@@ -39,6 +39,16 @@ const AddTypeShip = (props) => {
 
     };
     let handleSaveTypeShip = async () => {
+        if (!inputValues.type || !inputValues.price) {
+            toast.error("Tên loại ship và giá tiền không được để trống!");
+            return;
+        }
+    
+        // Kiểm tra giá tiền không âm và là số
+        if (isNaN(inputValues.price) || Number(inputValues.price) < 0) {
+            toast.error("Giá tiền phải là số và không được âm!");
+            return;
+        }
         if (isActionADD === true) {
             let res = await createNewTypeShipService({
                 type: inputValues.type,

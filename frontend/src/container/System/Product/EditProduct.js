@@ -49,7 +49,23 @@ const EditProduct = (props) => {
         setInputValues({ ...inputValues, [name]: value });
 
     };
+    const validateInputs = () => {
+        const { name, description, brandId, categoryId, originalPrice, discountPrice, image, contentMarkdown } = inputValues;
+        
+        if (!name || !description || !brandId || !categoryId || !originalPrice || !discountPrice || !image || !contentMarkdown) {
+            toast.error("Vui lòng điền đầy đủ thông tin bắt buộc!");
+            return false;
+        }
+    
+        if (Number(originalPrice) < 0 || Number(discountPrice) < 0) {
+            toast.error("Giá gốc và giá khuyến mãi không được là số âm!");
+            return false;
+        }
+    
+        return true;
+    };
     let handleSaveProduct = async () => {
+        if (!validateInputs()) return;
         setLoading(true)
         let res = await UpdateProductService({
             name: inputValues.name,

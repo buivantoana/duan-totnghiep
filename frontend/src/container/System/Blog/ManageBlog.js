@@ -58,7 +58,7 @@ const ManageBlog = () => {
             }
         })
         if (response && response.errCode === 0) {
-            toast.success("Xóa bài đăng thành công thành công !")
+            toast.success("Thay đổi trạng thái bài đăng thành công thành công !")
             let arrData = await getAllBlog({
 
                 subjectId:'',
@@ -71,13 +71,12 @@ const ManageBlog = () => {
                 setCount(Math.ceil(arrData.count / PAGINATION.pagerow))
             }
         } else {
-            toast.error("Xóa bài đăng thất bại")
+            toast.error("Thay đổi trạng thái bài đăng thất bại")
         }
     }
     let handleChangePage = async (number) => {
         setnumberPage(number.selected)
         let arrData = await getAllBlog({
-
             subjectId:'',
             limit: PAGINATION.pagerow,
             offset: number.selected * PAGINATION.pagerow,
@@ -159,7 +158,7 @@ const ManageBlog = () => {
                                                     <Link to={`/admin/edit-blog/${item.id}`}>Edit</Link>
                                                     &nbsp; &nbsp;
 
-                                                    <span onClick={() => handleDeleteBlog(item.id)} style={{ color: '#0E6DFE', cursor: 'pointer' }} >Delete</span>
+                                                    <span onClick={() => handleDeleteBlog(item.id)} style={{ color: '#0E6DFE', cursor: 'pointer' }} >{item.statusId == "S1"?"Deactive":"Active"}</span>
 
 
                                                 </td>

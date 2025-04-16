@@ -30,8 +30,8 @@ const AddProductVariant = () => {
 
     useEffect(() => {
         const fetchColorsAndSizes = async () => {
-            const colorRes = await colorService.getAllColor();
-            const sizeRes = await sizeService.getAllSizes();
+            const colorRes = await colorService.getAllColor(true);
+            const sizeRes = await sizeService.getAllSizes(true);
             setColors(colorRes);
             setSizes(sizeRes);
         };
@@ -66,6 +66,35 @@ const AddProductVariant = () => {
         fetchProducts(); // Lấy danh sách sản phẩm
     }, [id]);
 
+    const validateForm = () => {
+        const { productId, colorId, sizeId, stock } = inputValues;
+    
+        if (!productId) {
+            toast.error("Vui lòng chọn sản phẩm.");
+            return false;
+        }
+        if (!colorId) {
+            toast.error("Vui lòng chọn màu sắc.");
+            return false;
+        }
+        if (!sizeId) {
+            toast.error("Vui lòng chọn size.");
+            return false;
+        }
+    
+        if (stock === '' || isNaN(stock)) {
+            toast.error("Vui lòng nhập số lượng.");
+            return false;
+        }
+    
+        if (parseInt(stock) < 0) {
+            toast.error("Số lượng không được âm.");
+            return false;
+        }
+    
+        return true;
+    };
+    
     const handleOnChange = (event) => {
         const { name, value } = event.target;
         setInputValues({ ...inputValues, [name]: value });
@@ -119,6 +148,10 @@ const AddProductVariant = () => {
         return uploadedUrls;
     };
     const handleSaveVariant = async () => {
+        if (!validateForm()) {
+            setLoading(false);
+            return;
+        }
         setLoading(true)
         let data = {
             productId: inputValues.productId,

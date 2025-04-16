@@ -58,7 +58,13 @@ let getDetailTypeVoucherById = (id) => {
 let getAllTypeVoucher = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
+            const whereCondition = {};
+
+            if (data.type == "true") {
+              whereCondition.status = 'S1';
+            }
             let objectFilter = {
+                where:whereCondition,
                 include: [
                     { model: db.Allcode, as: 'typeVoucherData', attributes: ['value', 'code'] },
 
@@ -127,12 +133,12 @@ let deleteTypeVoucher = (data) => {
                 })
             } else {
                 let typevoucher = await db.TypeVoucher.findOne({
-                    where: { id: data.id }
+                    where: { id: data.id },
+                    raw:false
                 })
                 if (typevoucher) {
-                    await db.TypeVoucher.destroy({
-                        where: { id: data.id }
-                    })
+                    typevoucher.status = typevoucher.status == "S1" ? "S2" : "S1"
+                    await typevoucher.save()
                     resolve({
                         errCode: 0,
                         errMessage: 'ok'
@@ -150,6 +156,7 @@ let getSelectTypeVoucher = () => {
         try {
 
             let res = await db.TypeVoucher.findAll({
+                where:{status:"S1"},
                 include: [
                     { model: db.Allcode, as: 'typeVoucherData', attributes: ['value', 'code'] },
 
@@ -223,7 +230,13 @@ let getDetailVoucherById = (id) => {
 let getAllVoucher = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
+            const whereCondition = {};
+
+            if (data.type == "true") {
+              whereCondition.status = 'S1';
+            }
             let objectFilter = {
+                where:whereCondition,
                 include: [
                     {
                         model: db.TypeVoucher, as: 'typeVoucherOfVoucherData',
@@ -312,12 +325,12 @@ let deleteVoucher = (data) => {
                 })
             } else {
                 let voucher = await db.Voucher.findOne({
-                    where: { id: data.id }
+                    where: { id: data.id },
+                    raw:false
                 })
                 if (voucher) {
-                    await db.Voucher.destroy({
-                        where: { id: data.id }
-                    })
+                    voucher.status = voucher.status == "S1" ? "S2" : "S1"
+                    await voucher.save()
                     resolve({
                         errCode: 0,
                         errMessage: 'ok'

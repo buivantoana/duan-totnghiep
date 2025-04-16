@@ -37,7 +37,8 @@ let fetchData = async (code,keyword) => {
       subjectId:code,
       limit: PAGINATION.pagerow,
       offset: 0,
-      keyword:keyword
+      keyword:keyword,
+      type:true
   })
   if (arrData && arrData.errCode === 0) {
       setdataBlog(arrData.data)
@@ -63,7 +64,8 @@ let handleChangePage = async (number) => {
     subjectId:subjectId,
       limit: PAGINATION.pagerow,
       offset: number.selected * PAGINATION.pagerow,
-      keyword:keyword
+      keyword:keyword,
+      type:true
 
   })
   if (arrData && arrData.errCode === 0) {

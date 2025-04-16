@@ -32,10 +32,10 @@ const ManageProductVariant = () => {
         event.preventDefault();
         let res = await productVariantService.deleteProductVariant(id);
         if (res.message) {
-            toast.success("Xóa biến thể thành công");
+            toast.success("Thay đổi trạng thái biến thể thành công");
             fetchData();
         } else {
-            toast.error("Xóa biến thể thất bại");
+            toast.error("Thay đổi trạng thái biến thể thất bại");
         }
     };
 
@@ -114,7 +114,7 @@ const ManageProductVariant = () => {
                                                 <td>
                                                     <Link to={`/admin/edit-product-variant/${item.id}`}>Edit</Link>
                                                     &nbsp;|&nbsp;
-                                                    <a href="#" onClick={(e) => handleDelete(e, item.id)}>Delete</a>
+                                                    <a href="#" onClick={(e) => handleDelete(e, item.id)}>{item.status == "S1" ? "Deactive":"Active"}</a>
                                                 </td>
                                             </tr>
                                         )

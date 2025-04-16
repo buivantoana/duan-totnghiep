@@ -36,7 +36,8 @@ function ShopCartPage(props) {
             let res = await getAllTypeShip({
                 limit: '',
                 offset: '',
-                keyword: ''
+                keyword: '',
+                type:true
             })
             if (res && res.errCode === 0) {
                 settypeShip(res.data)

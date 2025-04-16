@@ -47,7 +47,7 @@ const ManageTypeShip = () => {
             }
         })
         if (res && res.errCode === 0) {
-            toast.success("Xóa loại voucher thành công")
+            toast.success("Thay đổi trạng thái loại voucher thành công")
             let arrData = await getAllTypeVoucher({
                 limit: PAGINATION.pagerow,
                 offset: numberPage * PAGINATION.pagerow
@@ -58,7 +58,7 @@ const ManageTypeShip = () => {
                 setCount(Math.ceil(arrData.count / PAGINATION.pagerow))
             }
 
-        } else toast.error("Xóa loại voucher thất bại")
+        } else toast.error("Thay đổi trạng thái loại voucher thất bại")
     }
     let handleChangePage = async (number) => {
         setnumberPage(number.selected)
@@ -127,7 +127,7 @@ const ManageTypeShip = () => {
                                                 <td>
                                                     <Link to={`/admin/edit-typevoucher/${item.id}`}>Edit</Link>
                                                     &nbsp; &nbsp;
-                                                    <span onClick={() => handleDeleteTypeVoucher(item.id)} style={{ color: '#0E6DFE', cursor: 'pointer' }}   >Delete</span>
+                                                    <span onClick={() => handleDeleteTypeVoucher(item.id)} style={{ color: '#0E6DFE', cursor: 'pointer' }}   >{item.status == "S1"? "Deactive":"Active"}</span>
                                                 </td>
                                             </tr>
                                         )

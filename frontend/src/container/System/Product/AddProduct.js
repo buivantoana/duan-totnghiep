@@ -79,7 +79,23 @@ const AddProduct = (props) => {
 
         setInputValues({ ...inputValues, ["isOpen"]: true });
     };
+    const validateInputs = () => {
+        const { name, description, brandId, categoryId, originalPrice, discountPrice, image, contentMarkdown } = inputValues;
+        
+        if (!name || !description || !brandId || !categoryId || !originalPrice || !discountPrice || !image || !contentMarkdown) {
+            toast.error("Vui lòng điền đầy đủ thông tin bắt buộc!");
+            return false;
+        }
+    
+        if (Number(originalPrice) < 0 || Number(discountPrice) < 0) {
+            toast.error("Giá gốc và giá khuyến mãi không được là số âm!");
+            return false;
+        }
+    
+        return true;
+    };
     let handleSaveProduct = async () => {
+        if (!validateInputs()) return;
         setLoading(true)
         const formData = new FormData();
         formData.append("image", inputValues.image);

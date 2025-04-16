@@ -39,6 +39,10 @@ const AddBrand = (props) => {
 
     };
     let handleSaveCategory = async () => {
+        if (!inputValues.value.trim() || !inputValues.code.trim()) {
+            toast.error("Vui lòng nhập đầy đủ thông tin tên danh mục và mã code");
+            return;
+        }
         if (isActionADD === true) {
             let res = await createAllCodeService({
                 value: inputValues.value,

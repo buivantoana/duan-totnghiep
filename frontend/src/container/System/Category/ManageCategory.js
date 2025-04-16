@@ -46,7 +46,7 @@ const ManageCategory = () => {
         event.preventDefault();
         let res = await DeleteAllcodeService(id)
         if (res && res.errCode === 0) {
-            toast.success("Xóa danh mục thành công")
+            toast.success("Thay đổi trạng thái danh mục thành công")
             let arrData = await getListAllCodeService({
 
                 type: 'CATEGORY',
@@ -60,7 +60,7 @@ const ManageCategory = () => {
                 setCount(Math.ceil(arrData.count / PAGINATION.pagerow))
             }
 
-        } else toast.error("Xóa danh mục thất bại")
+        } else toast.error("Thay đổi trạng thái danh mục thất bại")
     }
     let handleChangePage = async (number) => {
         setnumberPage(number.selected)
@@ -141,7 +141,7 @@ const ManageCategory = () => {
                                                 <td>
                                                     <Link to={`/admin/edit-category/${item.id}`}>Edit</Link>
                                                     &nbsp; &nbsp;
-                                                    <a href="#" onClick={(event) => handleDeleteCategory(event, item.id)} >Delete</a>
+                                                    <a href="#" onClick={(event) => handleDeleteCategory(event, item.id)} >{item.status == "S1"?"Deactive":"Active"}</a>
                                                 </td>
                                             </tr>
                                         )

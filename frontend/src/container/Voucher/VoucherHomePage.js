@@ -43,7 +43,8 @@ function VoucherHomePage(props) {
         let arrData = await getAllVoucher({
 
             limit: PAGINATION.pagerow,
-            offset: 0
+            offset: 0,
+            type:true
 
         })
         let arrTemp = []
@@ -68,7 +69,8 @@ function VoucherHomePage(props) {
         setnumberPage(number.selected)
         let arrData = await getAllVoucher({
             limit: PAGINATION.pagerow,
-            offset: number.selected * PAGINATION.pagerow
+            offset: number.selected * PAGINATION.pagerow,
+            type:true
 
         })
         if (arrData && arrData.errCode === 0) {

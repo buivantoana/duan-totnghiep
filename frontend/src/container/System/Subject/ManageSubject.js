@@ -46,7 +46,7 @@ const ManageSubject = () => {
         event.preventDefault();
         let res = await DeleteAllcodeService(id)
         if (res && res.errCode === 0) {
-            toast.success("Xóa chủ đề thành công")
+            toast.success("Thay đổi trạng thái chủ đề thành công")
             let arrData = await getListAllCodeService({
 
                 type: 'SUBJECT',
@@ -60,7 +60,7 @@ const ManageSubject = () => {
                 setCount(Math.ceil(arrData.count / PAGINATION.pagerow))
             }
 
-        } else toast.error("Xóa chủ đề thất bại")
+        } else toast.error("Thay đổi trạng thái chủ đề thất bại")
     }
     let handleChangePage = async (number) => {
         setnumberPage(number.selected)
@@ -139,7 +139,7 @@ const ManageSubject = () => {
                                                 <td>
                                                     <Link to={`/admin/edit-Brand/${item.id}`}>Edit</Link>
                                                     &nbsp; &nbsp;
-                                                    <a href="#" onClick={(event) => handleDeleteSubject(event, item.id)} >Delete</a>
+                                                    <a href="#" onClick={(event) => handleDeleteSubject(event, item.id)} >{item.status == "S1" ? "Deactive":"Active"}</a>
                                                 </td>
                                             </tr>
                                         )

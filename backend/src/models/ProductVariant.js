@@ -15,7 +15,11 @@ module.exports = (sequelize, DataTypes) => {
         sizeId: DataTypes.INTEGER,
         stock: DataTypes.INTEGER,
         imageUrl: DataTypes.TEXT('long'), 
-        price: DataTypes.FLOAT
+        price: DataTypes.FLOAT,
+        status: {
+            type: DataTypes.STRING,
+            defaultValue: 'S1', 
+        }
     }, {
         sequelize,
         modelName: 'ProductVariant',

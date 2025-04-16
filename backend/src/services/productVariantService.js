@@ -78,7 +78,8 @@ const deleteProductVariant = async (id) => {
          throw new Error('Product Variant not found');
       }
 
-      await variant.destroy();
+      variant.status = variant.status == "S1" ? "S2" : "S1"
+      await variant.save()
       return { message: 'Product variant deleted successfully' };
    } catch (error) {
       throw error;

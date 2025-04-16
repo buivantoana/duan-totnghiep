@@ -18,7 +18,11 @@ module.exports = (sequelize, DataTypes) => {
         typeVoucher: DataTypes.STRING,
         value: DataTypes.BIGINT,
         maxValue: DataTypes.BIGINT,
-        minValue: DataTypes.BIGINT
+        minValue: DataTypes.BIGINT,
+        status: {
+            type: DataTypes.STRING,
+            defaultValue: 'S1', 
+        }
     }, {
         sequelize,
         modelName: 'TypeVoucher',

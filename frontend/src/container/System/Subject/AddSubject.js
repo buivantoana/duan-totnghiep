@@ -39,6 +39,10 @@ const AddSubject = (props) => {
 
     };
     let handleSaveSubject = async () => {
+        if (!inputValues.value || !inputValues.code) {
+            toast.error("Vui lòng nhập đầy đủ thông tin!");
+            return;
+        }
         if (isActionADD === true) {
             let res = await createAllCodeService({
                 value: inputValues.value,

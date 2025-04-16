@@ -66,7 +66,8 @@ function HomePage(props) {
         let res = await getAllBanner({
             limit: 6,
             offset: 0,
-            keyword: ''
+            keyword: '',
+            type:true
         })
         if (res && res.errCode === 0) {
             setdataBanner(res.data)

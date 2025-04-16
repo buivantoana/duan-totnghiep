@@ -76,6 +76,16 @@ const AddVoucher = (props) => {
 
     }
     let handleSaveInforVoucher = async () => {
+        if (!inputValues.fromDate || !inputValues.toDate || !inputValues.typeVoucherId || !inputValues.amount || !inputValues.codeVoucher) {
+            toast.error("Tất cả các trường đều là bắt buộc!");
+            return;
+        }
+    
+        // Kiểm tra số lượng mã voucher không âm và là số
+        if (isNaN(inputValues.amount) || Number(inputValues.amount) < 0) {
+            toast.error("Số lượng mã voucher phải là số và không được âm!");
+            return;
+        }
         if (inputValues.isActionADD === true) {
             let response = await createNewVoucherService({
                 fromDate: new Date(inputValues.fromDate).getTime(),

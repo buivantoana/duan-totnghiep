@@ -17,6 +17,9 @@ module.exports = {
             hexCode: {
                 type: Sequelize.STRING // Mã màu HEX
             },
+            status: {
+                type: Sequelize.STRING
+            },
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE

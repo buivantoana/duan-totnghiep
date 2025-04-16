@@ -12,7 +12,7 @@ function Size(props) {
 
     useEffect(() => {
         const fetchSize = async () => {
-            let res = await sizeService.getAllSizes();
+            let res = await sizeService.getAllSizes(true);
             if (res && res.length > 0) {
                 const allOption = {
                     id: 0,

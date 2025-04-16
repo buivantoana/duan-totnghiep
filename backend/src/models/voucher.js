@@ -19,7 +19,11 @@ module.exports = (sequelize, DataTypes) => {
         toDate: DataTypes.STRING,
         typeVoucherId: DataTypes.INTEGER,
         amount: DataTypes.INTEGER,
-        codeVoucher: DataTypes.STRING
+        codeVoucher: DataTypes.STRING,
+        status: {
+            type: DataTypes.STRING,
+            defaultValue: 'S1', 
+        }
     }, {
         sequelize,
         modelName: 'Voucher',

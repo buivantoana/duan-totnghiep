@@ -48,7 +48,7 @@ const ManageBrand = () => {
         event.preventDefault();
         let res = await DeleteAllcodeService(id)
         if (res && res.errCode === 0) {
-            toast.success("Xóa nhãn hàng thành công")
+            toast.success("Thay đổi trạng thái nhãn hàng thành công")
             let arrData = await getListAllCodeService({
 
                 type: 'BRAND',
@@ -61,7 +61,7 @@ const ManageBrand = () => {
                 setCount(Math.ceil(arrData.count / PAGINATION.pagerow))
             }
 
-        } else toast.error("Xóa nhãn hàng thất bại")
+        } else toast.error("Thay đổi trạng thái nhãn hàng thất bại")
     }
     let handleChangePage = async (number) => {
         setnumberPage(number.selected)
@@ -142,7 +142,7 @@ const ManageBrand = () => {
                                                 <td>
                                                     <Link to={`/admin/edit-Brand/${item.id}`}>Edit</Link>
                                                     &nbsp; &nbsp;
-                                                    <a href="#" onClick={(event) => handleDeleteBrand(event, item.id)} >Delete</a>
+                                                    <a href="#" onClick={(event) => handleDeleteBrand(event, item.id)} >{item.status =="S1" ? "Deactive":"Active"}</a>
                                                 </td>
                                             </tr>
                                         )

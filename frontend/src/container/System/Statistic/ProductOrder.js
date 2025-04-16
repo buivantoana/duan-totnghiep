@@ -32,12 +32,12 @@ const ProductOrder = () => {
 
     return (
         <div className="container-fluid px-4">
-            <h1 className="mt-4">Top sản phẩm bán chạy</h1>
+           
 
             <div className="card mb-4">
                 <div className="card-header d-flex justify-content-between align-items-center">
                     <div>
-                        <i className="fas fa-table me-1" /> Danh sách
+                        <i className="fas fa-table me-1" /> Danh sách top sản phẩm bán chạy
                     </div>
                     <div className="d-flex align-items-center gap-3">
                         <select className="form-select w-auto" value={limit} onChange={handleLimitChange}>

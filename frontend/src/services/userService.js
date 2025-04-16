@@ -185,7 +185,7 @@ const getDetailBannerByIdService = (id) => {
     return axios.get(`/api/get-detail-banner?id=${id}`)
 }
 const getAllBanner = (data) => {
-    return axios.get(`/api/get-all-banner?limit=${data.limit}&offset=${data.offset}&keyword=${data.keyword}`)
+    return axios.get(`/api/get-all-banner?limit=${data.limit}&offset=${data.offset}&keyword=${data.keyword}&type=${data.type}`)
 }
 //=================BLOG=========================//
 const createNewBlogrService = (data) => {
@@ -201,7 +201,7 @@ const getDetailBlogByIdService = (id) => {
     return axios.get(`/api/get-detail-blog?id=${id}`)
 }
 const getAllBlog = (data) => {
-    return axios.get(`/api/get-all-blog?limit=${data.limit}&offset=${data.offset}&subjectId=${data.subjectId}&keyword=${data.keyword}`)
+    return axios.get(`/api/get-all-blog?limit=${data.limit}&offset=${data.offset}&subjectId=${data.subjectId}&keyword=${data.keyword}&type=${data.type}`)
 }
 const getFeatureBlog = (limit) => {
     return axios.get(`/api/get-feature-blog?limit=${limit}`)
@@ -223,7 +223,7 @@ const getDetailTypeShipByIdService = (id) => {
     return axios.get(`/api/get-detail-typeship?id=${id}`)
 }
 const getAllTypeShip = (data) => {
-    return axios.get(`/api/get-all-typeship?limit=${data.limit}&offset=${data.offset}&keyword=${data.keyword}`)
+    return axios.get(`/api/get-all-typeship?limit=${data.limit}&offset=${data.offset}&keyword=${data.keyword}&type=${data.type}`)
 }
 //===================TYPE VOUCHER===============//
 const createNewTypeVoucherService = (data) => {
@@ -239,7 +239,7 @@ const getDetailTypeVoucherByIdService = (id) => {
     return axios.get(`/api/get-detail-typevoucher?id=${id}`)
 }
 const getAllTypeVoucher = (data) => {
-    return axios.get(`/api/get-all-typevoucher?limit=${data.limit}&offset=${data.offset}`)
+    return axios.get(`/api/get-all-typevoucher?limit=${data.limit}&offset=${data.offset}&type=${data.type}`)
 }
 const getSelectTypeVoucher = () => {
     return axios.get(`/api/get-select-typevoucher`)
@@ -258,7 +258,7 @@ const getDetailVoucherByIdService = (id) => {
     return axios.get(`/api/get-detail-voucher?id=${id}`)
 }
 const getAllVoucher = (data) => {
-    return axios.get(`/api/get-all-voucher?limit=${data.limit}&offset=${data.offset}`)
+    return axios.get(`/api/get-all-voucher?limit=${data.limit}&offset=${data.offset}&type=${data.type}`)
 }
 const saveUserVoucherService = (data) => {
     return axios.post(`/api/save-user-voucher`, data)

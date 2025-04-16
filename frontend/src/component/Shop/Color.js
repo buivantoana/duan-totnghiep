@@ -13,7 +13,7 @@ function Color(props) {
 
     useEffect(() => {
         const fetchColor = async () => {
-            let res = await colorService.getAllColor();
+            let res = await colorService.getAllColor(true);
             if (res && res.length > 0) {
                 const allOption = {
                     id: 0,

@@ -8,7 +8,11 @@ module.exports = (sequelize, DataTypes) => {
         }
     };
     Size.init({
-        name: DataTypes.STRING // VD: "S", "M", "L", "XL", "42", "43", "44"
+        name: DataTypes.STRING,
+        status: {
+            type: DataTypes.STRING,
+            defaultValue: 'S1', 
+        } // VD: "S", "M", "L", "XL", "42", "43", "44"
     }, {
         sequelize,
         modelName: 'Size',

@@ -18,8 +18,8 @@ let createNewBlog = (data) => {
                     image: data.image,
                     contentMarkdown: data.contentMarkdown,
                     contentHTML: data.contentHTML,
-                    userId:data.userId,
-                    view:0
+                    userId: data.userId,
+                    view: 0
                 })
                 resolve({
                     errCode: 0,
@@ -41,10 +41,10 @@ let getDetailBlogById = (id) => {
                 })
             } else {
                 let blog = await db.Blog.findOne({
-                    where:{id:id},
-                    raw:false
+                    where: { id: id },
+                    raw: false
                 })
-                blog.view = blog.view +1;
+                blog.view = blog.view + 1;
                 await blog.save()
                 let res = await db.Blog.findOne({
                     where: { id: id },
@@ -55,8 +55,8 @@ let getDetailBlogById = (id) => {
                     raw: true,
                     nest: true
                 })
-                res.userData = await db.User.findOne({where:{id:res.userId}})
-              
+                res.userData = await db.User.findOne({ where: { id: res.userId } })
+
                 if (res && res.image) {
                     res.image = new Buffer(res.image, 'base64').toString('binary');
                 }
@@ -73,8 +73,13 @@ let getDetailBlogById = (id) => {
 let getAllBlog = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
+            const whereCondition = {};
+            console.log("tesst" , data)
+            if (data.type == "true") {
+                whereCondition.statusId = 'S1';
+            }
             let objectFilter = {
-                where: { statusId: 'S1' },
+                where: whereCondition,
                 include: [
                     { model: db.Allcode, as: 'subjectData', attributes: ['value', 'code'] },
 
@@ -86,21 +91,21 @@ let getAllBlog = (data) => {
                 objectFilter.limit = +data.limit
                 objectFilter.offset = +data.offset
             }
-            if(data.subjectId && data.subjectId !== ''){
-            
-                objectFilter.where = {...objectFilter.where, subjectId: data.subjectId}
+            if (data.subjectId && data.subjectId !== '') {
+
+                objectFilter.where = { ...objectFilter.where, subjectId: data.subjectId }
             }
-            if(data.keyword !=='') objectFilter.where = {...objectFilter.where, title: {[Op.substring]: data.keyword  } }
+            if (data.keyword !== '') objectFilter.where = { ...objectFilter.where, title: { [Op.substring]: data.keyword } }
             let res = await db.Blog.findAndCountAll(objectFilter)
             if (res.rows && res.rows.length > 0) {
-                for(let i=0; i< res.rows.length; i++){
+                for (let i = 0; i < res.rows.length; i++) {
                     res.rows[i].image = new Buffer(res.rows[i].image, 'base64').toString('binary')
-                    res.rows[i].userData = await db.User.findOne({where:{id:res.rows[i].userId }})
-                    res.rows[i].commentData = await db.Comment.findAll({where:{blogId:res.rows[i].id }})
+                    res.rows[i].userData = await db.User.findOne({ where: { id: res.rows[i].userId } })
+                    res.rows[i].commentData = await db.Comment.findAll({ where: { blogId: res.rows[i].id } })
                 }
-               
+
             }
-            
+
             resolve({
                 errCode: 0,
                 data: res.rows,
@@ -158,12 +163,12 @@ let deleteBlog = (data) => {
                 })
             } else {
                 let blog = await db.Blog.findOne({
-                    where: { id: data.id }
+                    where: { id: data.id },
+                    raw: false
                 })
                 if (blog) {
-                    await db.Blog.destroy({
-                        where: { id: data.id }
-                    })
+                    blog.statusId = blog.statusId == "S1" ? "S2" : "S1"
+                    await blog.save()
                     resolve({
                         errCode: 0,
                         errMessage: 'ok'
@@ -179,7 +184,7 @@ let deleteBlog = (data) => {
 let getFeatureBlog = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-        
+
             let res = await db.Blog.findAll({
                 where: { statusId: 'S1' },
                 include: [
@@ -187,23 +192,23 @@ let getFeatureBlog = (data) => {
 
                 ],
                 order: [['view', 'DESC']],
-                limit:+data.limit,
+                limit: +data.limit,
                 raw: true,
                 nest: true
             })
             if (res && res.length > 0) {
-                for(let i=0; i< res.length; i++){
+                for (let i = 0; i < res.length; i++) {
                     res[i].image = new Buffer(res[i].image, 'base64').toString('binary')
-                    res[i].userData = await db.User.findOne({where:{id:res[i].userId }})
-                    res[i].commentData = await db.Comment.findAll({where:{blogId:res[i].id }})
+                    res[i].userData = await db.User.findOne({ where: { id: res[i].userId } })
+                    res[i].commentData = await db.Comment.findAll({ where: { blogId: res[i].id } })
                 }
-               
+
             }
-            
+
             resolve({
                 errCode: 0,
                 data: res
-               
+
             })
 
 
@@ -216,7 +221,7 @@ let getFeatureBlog = (data) => {
 let getNewBlog = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-        
+
             let res = await db.Blog.findAll({
                 where: { statusId: 'S1' },
                 include: [
@@ -224,23 +229,23 @@ let getNewBlog = (data) => {
 
                 ],
                 order: [['createdAt', 'DESC']],
-                limit:+data.limit,
+                limit: +data.limit,
                 raw: true,
                 nest: true
             })
             if (res && res.length > 0) {
-                for(let i=0; i< res.length; i++){
+                for (let i = 0; i < res.length; i++) {
                     res[i].image = new Buffer(res[i].image, 'base64').toString('binary')
-                    res[i].userData = await db.User.findOne({where:{id:res[i].userId }})
-                    res[i].commentData = await db.Comment.findAll({where:{blogId:res[i].id }})
+                    res[i].userData = await db.User.findOne({ where: { id: res[i].userId } })
+                    res[i].commentData = await db.Comment.findAll({ where: { blogId: res[i].id } })
                 }
-               
+
             }
-            
+
             resolve({
                 errCode: 0,
                 data: res
-               
+
             })
 
 
@@ -256,6 +261,6 @@ module.exports = {
     getAllBlog: getAllBlog,
     updateBlog: updateBlog,
     deleteBlog: deleteBlog,
-    getFeatureBlog:getFeatureBlog,
-    getNewBlog:getNewBlog
+    getFeatureBlog: getFeatureBlog,
+    getNewBlog: getNewBlog
 }

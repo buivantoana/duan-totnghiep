@@ -46,9 +46,11 @@ let getAllCodeService = (typeInput) => {
                     errMessage: 'Missing required parameters !'
                 })
             } else {
+               
 
+                
                 let allcode = await db.Allcode.findAll({
-                    where: { type: typeInput }
+                    where: { type: typeInput,status:"S1" }
                 })
                 resolve({
                     errCode: 0,
@@ -123,7 +125,8 @@ let handleDeleteAllCode = (allcodeId) => {
                 })
             } else {
                 let foundAllCode = await db.Allcode.findOne({
-                    where: { id: allcodeId }
+                    where: { id: allcodeId },
+                    raw: false
                 })
                 if (!foundAllCode) {
                     resolve({
@@ -131,9 +134,8 @@ let handleDeleteAllCode = (allcodeId) => {
                         errMessage: `The allCode isn't exist`
                     })
                 }
-                await db.Allcode.destroy({
-                    where: { id: allcodeId }
-                })
+                foundAllCode.status = foundAllCode.status == "S1" ? "S2" : "S1"
+                await foundAllCode.save()
                 resolve({
                     errCode: 0,
                     message: `The allCode is deleted`
@@ -148,6 +150,7 @@ let handleDeleteAllCode = (allcodeId) => {
 let getListAllCodeService = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
+            
             let objectFilter = {
                 where: { type: data.type },
              
@@ -180,7 +183,7 @@ let getAllCategoryBlog = (typeInput) => {
             } else {
 
                 let allcode = await db.Allcode.findAll({
-                    where: { type: typeInput }
+                    where: { type: typeInput,status:"S1" }
                 })
                 for(let i = 0 ; i< allcode.length ; i++){
                     let blog = await db.Blog.findAll({where:{subjectId:allcode[i].code}})
