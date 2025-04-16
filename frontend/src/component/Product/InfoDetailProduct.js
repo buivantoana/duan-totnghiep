@@ -99,11 +99,11 @@ function InfoDetailProduct(props) {
     };
 
     return (
-        <div className="row s_product_inner">
-            <div className="container mt-5">
+        <div className="row s_product_inner" style={{ height: "570px" }}>
+            <div className="container">
                 <div className="row">
                     <div className="col-md-6">
-                        <div className="product-main-image" style={{ width: "80%", height: '500px', marginTop: "-50px" }}>
+                        <div className="product-main-image" style={{ width: "95%", height: '50vh', }}>
                             <Slider {...settings}>
                                 {JSON.parse(selectedVariant.imageUrl).map((image, index) => (
                                     <div key={index} style={{ borderRadius: "10px", overflow: "hidden" }}>
@@ -123,7 +123,20 @@ function InfoDetailProduct(props) {
                         <h2>{dataProduct.name}</h2>
                         <p className="text-muted">{dataProduct.categoryData.value}</p>
                         <p className="text-muted">Brand: {dataProduct.brandData.value}</p>
-                        <p>{dataProduct.description}</p>
+                        <div className="description-wrapper">
+                            {dataProduct.description.length > 150 ? (
+                                <p>
+                                    {dataProduct.description.slice(0, 150)}...
+                                    <span className="show-more" tabIndex="0">Xem thêm
+                                        <span className="popover-description">
+                                            {dataProduct.description}
+                                        </span>
+                                    </span>
+                                </p>
+                            ) : (
+                                <p>{dataProduct.description}</p>
+                            )}
+                        </div>
                         <div className="price">
                             <h6 style={{ color: "red", textDecoration: "line-through" }}>
                                 Giá gốc : {CommonUtils.formatter.format(dataProduct.originalPrice)}

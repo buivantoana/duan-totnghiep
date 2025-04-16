@@ -9,6 +9,14 @@ const getTopUsersOrder = (data) => {
     return axios.get(`/api/get-top-order-user?limit=${data.limit}`)
 
 }
+const sendForgotPassword = (email) => {
+    return axios.post(`/api/send-forgotpassword-email`, { email })
+
+}
+const resetPassword = (body) => {
+    return axios.post(`/api/forgotpassword-email`, body)
+
+}
 const createNewUser = (data) => {
     return axios.post(`/api/create-new-user`, data)
 
@@ -466,5 +474,6 @@ export {
     getStatisticByMonth, getStatisticByDay, checkPhonenumberEmail, createNewSupplierService, updateSupplierService, deleteSupplierService, getDetailSupplierByIdService,
     getAllSupplier, createNewReceiptService, getAllReceipt, getDetailReceiptByIdService, deleteReceiptService, updateReceiptService, createNewReceiptDetailService,
     getStatisticOverturn, getStatisticProfit, getProductShopcartService, getDetailUserByEmail, getProductRecommendService,
-    getStatisticStockProduct, getExchangeRate, paymentOrderVnpayService, confirmOrderVnpay, paymentOrderVnpaySuccessService, getAllProducts, searchOrder, getRank, getTopUsersOrder, getTopSellingProducts
+    getStatisticStockProduct, getExchangeRate, paymentOrderVnpayService, confirmOrderVnpay, paymentOrderVnpaySuccessService, getAllProducts, searchOrder, getRank, getTopUsersOrder, getTopSellingProducts,
+    sendForgotPassword, resetPassword
 }

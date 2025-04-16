@@ -67,7 +67,7 @@ function HomePage(props) {
             limit: 6,
             offset: 0,
             keyword: '',
-            type:true
+            type: true
         })
         if (res && res.errCode === 0) {
             setdataBanner(res.data)
@@ -106,7 +106,7 @@ function HomePage(props) {
             {/* <ProductFeature title={"Gợi ý sản phẩm"} data={dataProductRecommend}></ProductFeature>
             <ProductFeature title={"Sản phẩm đặc trưng"} data={dataProductFeature}></ProductFeature> */}
             <NewProductFeature title="Sản phẩm mới" description="Những sản phẩm vừa ra mắt mới lạ cuốn hút người xem" data={dataNewProductFeature}></NewProductFeature>
-            <RankList rankData={rankData} />
+            {/* <RankList rankData={rankData} /> */}
             <HomeBlog data={dataNewBlog} />
         </div>
     );

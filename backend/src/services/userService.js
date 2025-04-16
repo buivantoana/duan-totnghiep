@@ -476,7 +476,7 @@ let handleSendEmailForgotPassword = (email) => {
                         await emailService.sendSimpleEmail({
                             firstName: user.firstName,
                             lastName: user.lastName,
-                            redirectLink: `${process.env.URL_REACT}/verify-forgotpassword?token=${token}&userId=${user.id}`,
+                            redirectLink: `${process.env.URL_REACT}/login?token=${token}&userId=${user.id}`,
                             email: user.email,
                             type: 'forgotpassword'
                         })
