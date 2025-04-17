@@ -50,22 +50,42 @@ const AddTypeVoucher = (props) => {
             toast.error("Tất cả các trường đều là bắt buộc!");
             return;
         }
-    
+
         // Kiểm tra giá trị phải là số và không âm
         if (isNaN(inputValues.value) || Number(inputValues.value) < 0) {
             toast.error("Giá trị phải là số và không được âm!");
             return;
         }
-    
+
         if (isNaN(inputValues.minValue) || Number(inputValues.minValue) < 0) {
             toast.error("Giá trị tối thiểu phải là số và không được âm!");
             return;
         }
-    
+
         if (isNaN(inputValues.maxValue) || Number(inputValues.maxValue) < 0) {
             toast.error("Giá trị tối đa phải là số và không được âm!");
             return;
         }
+
+        // Validate theo loại voucher
+        if (inputValues.typeVoucher === 'percent') {
+            if (Number(inputValues.value) > 100) {
+                toast.error("Giá trị phần trăm không được lớn hơn 100!");
+                return;
+            }
+        } else if (inputValues.typeVoucher === 'money') {
+            if (Number(inputValues.value) < 0) {
+                toast.error("Giá trị tiền tệ không được âm!");
+                return;
+            }
+        }
+
+        // Kiểm tra minValue phải <= maxValue
+        if (Number(inputValues.minValue) > Number(inputValues.maxValue)) {
+            toast.error("Giá trị tối thiểu phải nhỏ hơn hoặc bằng giá trị tối đa!");
+            return;
+        }
+
         if (isActionADD === true) {
             let res = await createNewTypeVoucherService({
                 typeVoucher: inputValues.typeVoucher,
@@ -97,7 +117,6 @@ const AddTypeVoucher = (props) => {
             })
             if (res && res.errCode === 0) {
                 toast.success("Cập nhật loại voucher thành công")
-
             }
             else if (res && res.errCode === 2) {
                 toast.error(res.errMessage)
@@ -105,6 +124,7 @@ const AddTypeVoucher = (props) => {
             else toast.error("Cập nhật loại voucher thất bại")
         }
     }
+
 
 
     return (

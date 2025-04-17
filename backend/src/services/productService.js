@@ -148,7 +148,7 @@ let getAllProductUser = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
             let variantWhere = {
-                status:"S1"
+                status: "S1"
             };
             if (data.sizeId && data.sizeId !== 'ALL') {
                 variantWhere['$variants.sizeId$'] = data.sizeId; // Sử dụng alias của sizeId trong mối quan hệ variants
@@ -158,7 +158,7 @@ let getAllProductUser = (data) => {
             if (data.colorId && data.colorId !== 'ALL') {
                 variantWhere['$variants.colorId$'] = data.colorId; // Sử dụng alias của colorId trong mối quan hệ variants
             }
-           
+
             console.log(variantWhere);
             let objectFilter = {
                 where: { statusId: 'S1' },
@@ -961,7 +961,7 @@ let getProductNew = (limit) => {
                     { model: db.Allcode, as: 'brandData', attributes: ['value', 'code'] },
                     { model: db.Allcode, as: 'categoryData', attributes: ['value', 'code'] },
                     { model: db.Allcode, as: 'statusData', attributes: ['value', 'code'] },
-                    // { model: db.Favorite, as: 'favorites' },
+
                 ],
                 limit: +limit,
                 order: [['createdAt', 'DESC']],
