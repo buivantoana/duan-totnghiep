@@ -325,7 +325,7 @@ let getTopUsersByTotalSpentWithRank = () => {
                     { model: db.Allcode, as: 'statusOrderData' },
                     { model: db.AddressUser, as: 'addressData' },
                     { model: db.OrderDetail, as: 'OrderDetails' },
-                    { model: db.User, as: 'user', attributes: ['id', 'firstName', 'lastName', ] }  // Lấy thông tin người dùng
+                    { model: db.User, as: 'orders', attributes: ['id', 'firstName', 'lastName', ] }  // Lấy thông tin người dùng
                 ],
                 raw: false,  // Dùng raw false để trả về các đối tượng Sequelize đã được xử lý đầy đủ
                 nest: true    // Lấy dữ liệu theo dạng đối tượng lồng nhau

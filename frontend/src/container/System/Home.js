@@ -21,6 +21,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import StockProduct from './Statistic/StockProduct';
 import ProductOrder from './Statistic/ProductOrder';
 import UserOrder from './Statistic/UserOrder';
+import Turnover from './Statistic/Turnover';
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -315,6 +316,7 @@ const Home = () => {
       <div>
         <div><ProductOrder/></div>
         <div><UserOrder/></div>
+        <div><Turnover/></div>
       </div>
     </div>
   )

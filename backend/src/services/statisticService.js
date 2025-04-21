@@ -440,21 +440,18 @@ let getStatisticOverturn = (data) => {
                         nest: true
                     }
                 )
+                
                 for (let i = 0; i < orderProduct.length; i++) {
                     orderProduct[i].orderDetail = await db.OrderDetail.findAll({ where: { orderId: orderProduct[i].id } })
                     orderProduct[i].voucherData.typeVoucherOfVoucherData = await db.TypeVoucher.findOne({
                         where: { id: orderProduct[i].voucherData.typeVoucherId }
                     })
                     let totalprice = 0
-                    for (let j = 0; j < orderProduct[i].orderDetail.length; j++) {
-                        totalprice = totalprice + (orderProduct[i].orderDetail[j].realPrice * orderProduct[i].orderDetail[j].quantity)
-                    }
-
-                    if (orderProduct[i].voucherId) {
-                        orderProduct[i].totalpriceProduct = totalPriceDiscount(totalprice, orderProduct[i]) + orderProduct[i].typeShipData.price
-                    } else {
-                        orderProduct[i].totalpriceProduct = totalprice + orderProduct[i].typeShipData.price
-                    }
+                    // for (let j = 0; j < orderProduct[i].orderDetail.length; j++) {
+                    //     totalprice = totalprice + (orderProduct[i].orderDetail[j].realPrice * orderProduct[i].orderDetail[j].quantity)
+                    // }
+                     orderProduct[i].totalpriceProduct = totalprice += orderProduct[i].total
+                    
                 }
                 orderProduct = orderProduct.filter(item => {
 

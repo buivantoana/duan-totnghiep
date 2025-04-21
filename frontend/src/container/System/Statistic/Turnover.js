@@ -13,12 +13,17 @@ const Turnover = (props) => {
     const [dataOrder, setdataOrder] = useState([])
     const [dataExport, setdataExport] = useState([])
     const [totalPrice, settotalPrice] = useState(0)
-    const [type, settype] = useState('day')
+    const [type, settype] = useState('month')
     const [dateRange, setDateRange] = useState([null, null]);
     const [startDate, endDate] = dateRange;
     const [DateTime, setDateTime] = useState(new Date());
 
 
+    useEffect(() => {
+        if (type === 'month') {
+            handleOnclick();
+        }
+    }, [type]);
 
     let handleOnclick = async () => {
 
@@ -59,7 +64,7 @@ const Turnover = (props) => {
 
     return (
         <div className="container-fluid px-4">
-            <h1 className="mt-4">Thống kê</h1>
+            {/* <h1 className="mt-4">Thống kê</h1> */}
 
 
             <div className="card mb-4">
@@ -69,9 +74,11 @@ const Turnover = (props) => {
                 </div>
                 <div className="card-body">
                     <form>
-                        <div className="form-row">
-                            <div className="form-group col-md-2">
-                                <label htmlFor="inputZip">Loại thống kê</label>
+                        <div style={{display:"flex",gap:'20px',alignItems:"end"}}>
+
+                        <div className="" >
+                            <div className=" ">
+                                <label htmlFor="">Loại thống kê</label>
                                 <select value={type} name="type" onChange={(event) => settype(event.target.value)} id="inputState" className="form-control">
                                     <option value="day">Ngày</option>
                                     <option value="month">Tháng</option>
@@ -79,11 +86,11 @@ const Turnover = (props) => {
                                 </select>
                             </div>
                         </div>
-                        <div className="form-row">
+                        <div className="" style={{display:'flex',alignItems:"end"}}>
                             {type == "day" &&
                                 <>
 
-                                    <div className="form-group col-md-2">
+                                    <div >
                                         <DatePicker
                                             showMonthDropdown
                                             showYearDropdown
@@ -103,7 +110,7 @@ const Turnover = (props) => {
                             }
                             {type == "month" &&
                                 <>
-                                    <div className="form-group col-md-2">
+                                    <div >
                                         <label htmlFor="inputCity">Chọn tháng</label>
                                         <DatePicker
                                             selected={DateTime}
@@ -117,7 +124,7 @@ const Turnover = (props) => {
                             }
                             {type == "year" &&
                                 <>
-                                    <div className="form-group col-md-2">
+                                    <div >
                                         <label htmlFor="inputCity">Chọn năm</label>
                                         <DatePicker
                                             selected={DateTime}
@@ -133,6 +140,7 @@ const Turnover = (props) => {
 
                         </div>
                         <button type="button" onClick={() => handleOnclick()} className="btn btn-primary">Lọc</button>
+                        </div>
                     </form>
                 </div>
                 <div className="card-body">
