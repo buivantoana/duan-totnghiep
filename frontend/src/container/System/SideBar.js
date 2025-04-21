@@ -220,7 +220,7 @@ const SideBar = () => {
 
                                 <div className="collapse" id="collapseStatistic" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                     <nav className="sb-sidenav-menu-nested nav">
-                                        <Link to={'/admin/turnover'} className="nav-link" >Thống kê doanh thu</Link>
+                                        {/* <Link to={'/admin/turnover'} className="nav-link" >Thống kê doanh thu</Link> */}
 
                                         {/* <Link to={'/admin/profit'} className="nav-link" >Thống kê lợi nhuận</Link> */}
                                         <Link to={'/admin/stock-product'} className="nav-link" >Thống kê tồn kho</Link>
