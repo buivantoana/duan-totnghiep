@@ -119,8 +119,8 @@ let initwebRoutes = (app) => {
     router.post('/api/save-user-voucher', middlewareControllers.verifyTokenUser, voucherController.saveUserVoucher)
     router.get('/api/get-all-voucher-by-userid', voucherController.getAllVoucherByUserId)
     //=================API REVIEW=============================//
-    router.post('/api/create-new-review', middlewareControllers.verifyTokenUser, commentController.createNewReview)
-    router.post('/api/reply-review', middlewareControllers.verifyTokenAdmin, commentController.ReplyReview)
+    router.post('/api/create-new-review', commentController.createNewReview)
+    router.post('/api/reply-review', commentController.ReplyReview)
     router.get('/api/get-all-review-by-productId', commentController.getAllReviewByProductId)
     router.delete('/api/delete-review', middlewareControllers.verifyTokenUser, commentController.deleteReview)
 
@@ -155,7 +155,7 @@ let initwebRoutes = (app) => {
     router.post('/api/sendMessage', middlewareControllers.verifyTokenUser, messageController.sendMessage)
     router.get('/api/loadMessage', middlewareControllers.verifyTokenUser, messageController.loadMessage)
     router.get('/api/listRoomOfUser', middlewareControllers.verifyTokenUser, messageController.listRoomOfUser)
-    router.get('/api/listRoomOfAdmin', middlewareControllers.verifyTokenAdmin, messageController.listRoomOfAdmin)
+    router.get('/api/listRoomOfAdmin', messageController.listRoomOfAdmin)
     //==================API COMMENT============================//
     router.post('/api/create-new-comment', middlewareControllers.verifyTokenUser, commentController.createNewComment)
     router.post('/api/reply-comment', middlewareControllers.verifyTokenAdmin, commentController.ReplyComment)
