@@ -317,68 +317,48 @@ let updateStatusOrder = (data) => {
 let getTopUsersByTotalSpentWithRank = () => {
     return new Promise(async (resolve, reject) => {
         try {
-            // Lấy tất cả đơn hàng của người dùng và kèm theo thông tin người dùng
-            let orders = await db.OrderProduct.findAll({
-                include: [
-                    { model: db.TypeShip, as: 'typeShipData' },
-                    { model: db.Voucher, as: 'voucherData' },
-                    { model: db.Allcode, as: 'statusOrderData' },
-                    { model: db.AddressUser, as: 'addressData' },
-                    { model: db.OrderDetail, as: 'OrderDetails' },
-                    { model: db.User, as: 'orders', attributes: ['id', 'firstName', 'lastName', ] }  // Lấy thông tin người dùng
-                ],
-                raw: false,  // Dùng raw false để trả về các đối tượng Sequelize đã được xử lý đầy đủ
-                nest: true    // Lấy dữ liệu theo dạng đối tượng lồng nhau
-            });
-            console.log(orders);
-            // Tính tổng chi tiêu cho từng người dùng (group theo userId)
-            const userSpending = {};
-
-            orders.forEach(order => {
-                const { userId, total, user } = order;  // Lấy thông tin người dùng từ đối tượng
-                if (!userSpending[userId]) {
-                    userSpending[userId] = { totalSpent: 0, user: user };  // Lưu cả người dùng
-                }
-                userSpending[userId].totalSpent += total;  // Cộng tổng số tiền vào tổng chi tiêu của người dùng
+            // Lấy top 3 người dùng có điểm lớn hơn 0
+            let topUsers = await db.User.findAll({
+                where: {
+                    points: {
+                        [db.Sequelize.Op.gt]: 0
+                    }
+                },
+                order: [['points', 'DESC']],
+                limit: 3,
+                attributes: ['id', 'firstName', 'lastName', 'points'],
+                raw: true
             });
 
-            // Chuyển dữ liệu userSpending thành mảng các đối tượng và sắp xếp theo tổng chi tiêu giảm dần
-            const userRankings = Object.keys(userSpending)
-                .map(userId => ({
-                    userId: userId,
-                    totalSpent: userSpending[userId].totalSpent,
-                    user: userSpending[userId].user  // Thêm thông tin người dùng vào kết quả
-                }))
-                .sort((a, b) => b.totalSpent - a.totalSpent); // Sắp xếp theo tổng chi tiêu giảm dần
-
-            // Thêm xếp hạng cho mỗi người dùng
-            const top3Users = userRankings.slice(0, 3).map((user, index) => {
+            // Gắn rank tương ứng
+            const topUsersWithRank = topUsers.map((user, index) => {
                 let rank = '';
                 switch (index) {
                     case 0:
-                        rank = 'Gold'; // Người đứng đầu là Gold
+                        rank = 'Gold';
                         break;
                     case 1:
-                        rank = 'Silver'; // Người thứ 2 là Silver
+                        rank = 'Silver';
                         break;
                     case 2:
-                        rank = 'Bronze'; // Người thứ 3 là Bronze
+                        rank = 'Bronze';
                         break;
                     default:
-                        rank = 'Unranked'; // Nếu có trường hợp không mong đợi
-                        break;
+                        rank = 'Unranked';
                 }
-
-                return { ...user, rank: rank }; // Thêm xếp hạng vào đối tượng người dùng
+                return {
+                    ...user,
+                    fullName: `${user.firstName} ${user.lastName}`,
+                    rank: rank
+                };
             });
 
             resolve({
                 errCode: 0,
-                data: top3Users
+                data: topUsersWithRank
             });
-
-        } catch (error) {
-            reject(error);
+        } catch (e) {
+            reject(e);
         }
     });
 };

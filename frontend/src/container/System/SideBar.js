@@ -166,17 +166,17 @@ const SideBar = () => {
                             </>
                         }
 
-                        {/* <a className="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseSupplier" aria-expanded="false" aria-controls="collapseLayouts">
+                        <a className="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseSupplier" aria-expanded="false" aria-controls="collapseLayouts">
                             <div className="sb-nav-link-icon"><i class="fa-solid fa-person-military-pointing"></i></div>
                             Quản lý nhà cung cấp
                             <div className="sb-sidenav-collapse-arrow"><i className="fas fa-angle-down" /></div>
-                        </a> */}
-                        {/* <div className="collapse" id="collapseSupplier" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                        </a> 
+                         <div className="collapse" id="collapseSupplier" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                             <nav className="sb-sidenav-menu-nested nav">
                                 <Link to={'/admin/list-supplier'} className="nav-link" >Danh sách nhà cung cấp</Link>
                                 <Link to={'/admin/add-supplier'} className="nav-link" >Thêm nhà cung cấp</Link>
                             </nav>
-                        </div> */}
+                        </div>
                         {/* <a className="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseReceipt" aria-expanded="false" aria-controls="collapseLayouts">
                             <div className="sb-nav-link-icon"><i class="fa-solid fa-file-import"></i></div>
                             Quản lý nhập hàng
@@ -199,7 +199,7 @@ const SideBar = () => {
 
                             </nav>
                         </div>
-                        <a className="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseOrder" aria-expanded="false" aria-controls="collapseLayouts">
+                        {/* <a className="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseOrder" aria-expanded="false" aria-controls="collapseLayouts">
                             <div className="sb-nav-link-icon"><i class="fa-brands fa-facebook-messenger"></i></div>
                             Quản lý tin nhắn
                             <div className="sb-sidenav-collapse-arrow"><i className="fas fa-angle-down" /></div>
@@ -209,7 +209,7 @@ const SideBar = () => {
                                 <Link to={'/admin/chat'} className="nav-link" >Messenger</Link>
 
                             </nav>
-                        </div>
+                        </div> */}
                         {user && user.roleId === "R1" &&
                             <>
                                 <a className="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseStatistic" aria-expanded="false" aria-controls="collapseLayouts">

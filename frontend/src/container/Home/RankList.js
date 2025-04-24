@@ -25,7 +25,7 @@ const RankList = ({ rankData }) => {
             };
          default:
             return {
-               gradient: 'linear-gradient(135deg, #ffffff, #f0f0f0)',
+               gradient: 'linear-gradient(135deg, rgb(255, 255, 255), rgb(26 17 1))',
                shadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
             };
       }
@@ -55,14 +55,14 @@ const RankList = ({ rankData }) => {
                         </div>
                         <div className="user-details">
                            <h6 className="user-name">
-                              {item.user
-                                 ? `${item.user.firstName} ${item.user.lastName}`
-                                 : 'Người dùng ẩn danh'}
+                              {
+                                  `${item.firstName} ${item.lastName}`
+                                }
                            </h6>
                            <div className="user-stats">
 
                               <span className="spent-amount">
-                                 {formatCurrency(item.totalSpent)}
+                                 Điểm thưởng : {item.points}
                               </span>
                            </div>
                         </div>
