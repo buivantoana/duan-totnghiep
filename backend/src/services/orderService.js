@@ -200,7 +200,12 @@ let getDetailOrderById = (id) => {
                     where: { id: id },
                     include: [
                         { model: db.TypeShip, as: 'typeShipData' },
-                        { model: db.Voucher, as: 'voucherData' },
+                        {
+                            model: db.Voucher, as: 'voucherData',
+                            include: [
+                                { model: db.TypeVoucher, as: 'typeVoucherOfVoucherData' }
+                            ]
+                        },
                         { model: db.Allcode, as: 'statusOrderData' },
                         { model: db.AddressUser, as: 'addressData' },
                         {
@@ -258,12 +263,17 @@ let updateStatusOrder = (data) => {
                 });
             }
 
-            let history = order.statusHistory? JSON.parse(order.statusHistory) : [];
+            let history = order.statusHistory ? JSON.parse(order.statusHistory) : [];
 
-           
+            // Tạo ngày cho statusHistory
+            let historyDate = new Date();
+            if (data.statusId === 'S6') {
+                historyDate.setDate(historyDate.getDate() + 3); // Cộng thêm 3 ngày nếu statusId là S6
+            }
+
             history.push({
                 statusId: order.statusId,
-                updatedAt: new Date().toISOString(),
+                updatedAt: historyDate.toISOString(),
             });
             order.statusId = data.statusId;
             order.statusHistory = JSON.stringify(history);
@@ -292,16 +302,19 @@ let updateStatusOrder = (data) => {
                     }
                 }));
             }
-            if (data.statusId == 'S6' && order) {
+
+            // Cộng điểm cho người dùng khi status là S6
+            if (data.statusId === 'S6' && order) {
                 let user = await db.User.findOne({
                     where: { id: order.userId },
                     raw: false
-                })
+                });
                 if (user) {
-                    user.points = user.points + 1000
-                    await user.save()
+                    user.points = user.points + 1000;
+                    await user.save();
                 }
             }
+
             return resolve({
                 errCode: 0,
                 errMessage: 'OK',

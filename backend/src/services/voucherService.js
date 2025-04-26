@@ -11,6 +11,35 @@ let createNewTypeVoucher = (data) => {
                     errMessage: 'Missing required parameter !'
                 })
             } else {
+                if (data.typeVoucher === 'money') {
+                    // Lấy tất cả sản phẩm có statusId: S1
+                    let products = await db.Product.findAll({
+                        where: { statusId: "S1" },
+                        attributes: ['id', 'discountPrice', 'originalPrice'],
+                        raw: true
+                    });
+
+                    if (products && products.length > 0) {
+                        // Tìm giá cao nhất trong danh sách sản phẩm
+                        let maxPrice = Math.max(...products.map(product => product.discountPrice || product.originalPrice));
+
+                        // Kiểm tra nếu value của voucher >= giá cao nhất
+                        if (data.value >= maxPrice) {
+                            resolve({
+                                errCode: 2,
+                                errMessage: `Giá trị phiếu giảm giá (${data.value}) không được lớn hơn hoặc bằng giá sản phẩm cao nhất (${maxPrice})`
+                            });
+                            return;
+                        }
+                    } else {
+                        resolve({
+                            errCode: 3,
+                            errMessage: 'No active products found to compare voucher value'
+                        });
+                        return;
+                    }
+                }
+
                 await db.TypeVoucher.create({
                     typeVoucher: data.typeVoucher,
                     value: data.value,
@@ -61,10 +90,10 @@ let getAllTypeVoucher = (data) => {
             const whereCondition = {};
 
             if (data.type == "true") {
-              whereCondition.status = 'S1';
+                whereCondition.status = 'S1';
             }
             let objectFilter = {
-                where:whereCondition,
+                where: whereCondition,
                 include: [
                     { model: db.Allcode, as: 'typeVoucherData', attributes: ['value', 'code'] },
 
@@ -134,7 +163,7 @@ let deleteTypeVoucher = (data) => {
             } else {
                 let typevoucher = await db.TypeVoucher.findOne({
                     where: { id: data.id },
-                    raw:false
+                    raw: false
                 })
                 if (typevoucher) {
                     typevoucher.status = typevoucher.status == "S1" ? "S2" : "S1"
@@ -156,7 +185,7 @@ let getSelectTypeVoucher = () => {
         try {
 
             let res = await db.TypeVoucher.findAll({
-                where:{status:"S1"},
+                where: { status: "S1" },
                 include: [
                     { model: db.Allcode, as: 'typeVoucherData', attributes: ['value', 'code'] },
 
@@ -233,10 +262,10 @@ let getAllVoucher = (data) => {
             const whereCondition = {};
 
             if (data.type == "true") {
-              whereCondition.status = 'S1';
+                whereCondition.status = 'S1';
             }
             let objectFilter = {
-                where:whereCondition,
+                where: whereCondition,
                 include: [
                     {
                         model: db.TypeVoucher, as: 'typeVoucherOfVoucherData',
@@ -326,7 +355,7 @@ let deleteVoucher = (data) => {
             } else {
                 let voucher = await db.Voucher.findOne({
                     where: { id: data.id },
-                    raw:false
+                    raw: false
                 })
                 if (voucher) {
                     voucher.status = voucher.status == "S1" ? "S2" : "S1"

@@ -370,6 +370,7 @@ let updateProduct = (data) => {
                     product.categoryId = data.categoryId;
                     product.contentMarkdown = data.contentMarkdown;
                     product.contentHTML = data.contentHTML;
+                    product.image = data.image;
 
                     await product.save()
                     resolve({

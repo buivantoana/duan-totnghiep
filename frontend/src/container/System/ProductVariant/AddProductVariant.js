@@ -2,12 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useParams } from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.css';
-import productVariantService from '../../../services/product_variant'; // Giả sử dịch vụ này dùng để thao tác với ProductVariant
-import colorService from '../../../services/color'; // Dịch vụ lấy danh sách màu sắc từ API
-import sizeService from '../../../services/size'; // Dịch vụ lấy danh sách size từ API
-import productService, { getAllProductAdmin, getAllProducts } from '../../../services/userService'; // Giả sử dịch vụ này dùng để thao tác với Product
+import productVariantService from '../../../services/product_variant';
+import colorService from '../../../services/color';
+import sizeService from '../../../services/size';
+import { getAllProducts } from '../../../services/userService';
 import { uploadImage } from '../../../services/upload';
-import { JSON } from 'persist/lib/type';
 import Loading from '../../../component/Loading';
 
 const AddProductVariant = () => {
@@ -19,14 +18,13 @@ const AddProductVariant = () => {
         sizeId: '',
         stock: '',
         price: '',
-        imageUrls: [],
+        imageUrls: [], // Will store both URLs (for existing images) and File objects (for new images)
         hexCode: '#000000',
-
     });
     const [colors, setColors] = useState([]);
     const [sizes, setSizes] = useState([]);
     const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const fetchColorsAndSizes = async () => {
@@ -38,7 +36,7 @@ const AddProductVariant = () => {
 
         const fetchProducts = async () => {
             const productRes = await getAllProducts();
-            if (productRes.errCode == 0) {
+            if (productRes.errCode === 0) {
                 setProducts(productRes.data);
             }
         };
@@ -48,13 +46,20 @@ const AddProductVariant = () => {
                 setIsActionADD(false);
                 let variantData = await productVariantService.getDetailProductVariant(id);
                 if (variantData) {
+                    // Parse imageUrl string to array if it's a JSON string
+                    let images = [];
+                    try {
+                        images = JSON.parse(variantData.imageUrl) || [];
+                    } catch (e) {
+                        images = variantData.imageUrl || [];
+                    }
                     setInputValues({
                         productId: variantData.productId,
                         colorId: variantData.colorId,
                         sizeId: variantData.sizeId,
                         stock: variantData.stock,
                         price: variantData.price,
-                        imageUrls: variantData.imageUrls,
+                        imageUrls: images, // Store URLs as strings
                         hexCode: variantData.hexCode,
                     });
                 }
@@ -62,13 +67,13 @@ const AddProductVariant = () => {
             fetchDetailVariant();
         }
 
-        fetchColorsAndSizes(); // Lấy danh sách màu sắc và size
-        fetchProducts(); // Lấy danh sách sản phẩm
+        fetchColorsAndSizes();
+        fetchProducts();
     }, [id]);
 
     const validateForm = () => {
         const { productId, colorId, sizeId, stock } = inputValues;
-    
+
         if (!productId) {
             toast.error("Vui lòng chọn sản phẩm.");
             return false;
@@ -81,20 +86,20 @@ const AddProductVariant = () => {
             toast.error("Vui lòng chọn size.");
             return false;
         }
-    
+
         if (stock === '' || isNaN(stock)) {
             toast.error("Vui lòng nhập số lượng.");
             return false;
         }
-    
+
         if (parseInt(stock) < 0) {
             toast.error("Số lượng không được âm.");
             return false;
         }
-    
+
         return true;
     };
-    
+
     const handleOnChange = (event) => {
         const { name, value } = event.target;
         setInputValues({ ...inputValues, [name]: value });
@@ -102,7 +107,8 @@ const AddProductVariant = () => {
 
     const handleImageChange = (event) => {
         const files = Array.from(event.target.files);
-        if (files.length + inputValues.imageUrls.length <= 5) {
+        const totalImages = files.length + inputValues.imageUrls.length;
+        if (totalImages <= 5) {
             setInputValues({
                 ...inputValues,
                 imageUrls: [...inputValues.imageUrls, ...files],
@@ -129,30 +135,34 @@ const AddProductVariant = () => {
         setInputValues({ ...inputValues, productId: event.target.value });
     };
 
-    const uploadImages = async () => {
+    const uploadImages = async (files) => {
         const uploadedUrls = [];
-        for (let i = 0; i < inputValues.imageUrls.length; i++) {
-            const file = inputValues.imageUrls[i];
+        for (let file of files) {
+            if (typeof file === 'string') {
+                uploadedUrls.push(file); // Keep existing URLs
+                continue;
+            }
             const formData = new FormData();
             formData.append("image", file);
             try {
-                const uploadRes = await uploadImage(formData); // Upload ảnh và nhận URL
+                const uploadRes = await uploadImage(formData);
                 if (uploadRes?.url) {
-                    uploadedUrls.push(uploadRes.url); // Thêm URL vào mảng
+                    uploadedUrls.push(uploadRes.url);
                 }
             } catch (error) {
                 toast.error("Lỗi khi tải ảnh lên");
-                return [];
+                return null;
             }
         }
         return uploadedUrls;
     };
+
     const handleSaveVariant = async () => {
         if (!validateForm()) {
             setLoading(false);
             return;
         }
-        setLoading(true)
+        setLoading(true);
         let data = {
             productId: inputValues.productId,
             colorId: inputValues.colorId,
@@ -160,40 +170,39 @@ const AddProductVariant = () => {
             stock: inputValues.stock,
             price: 0,
             hexCode: inputValues.hexCode,
-        }
+        };
+
         let res;
-        if (!id) {
-            const uploadedUrls = await uploadImages();
-            if (uploadedUrls.length == inputValues.imageUrls.length) {
-                data['imageUrl'] = uploadedUrls.reduce((acc, item, index) => {
-                    acc += `"${item}"`;
-                    if (index < uploadedUrls.length - 1) acc += ', '; // Thêm dấu phẩy giữa các phần tử
-                    return acc;
-                }, '[') + ']'
-
-
-
-
-                if (isActionADD) {
-                    res = await productVariantService.createProductVariant(data);
-                    if (res && res.code == 200) {
-                        toast.success("Thêm biến thể sản phẩm thành công");
-                    } else {
-                        toast.error(res.message);
-                    }
+        if (isActionADD) {
+            // Add new variant
+            const uploadedUrls = await uploadImages(inputValues.imageUrls);
+            if (uploadedUrls && uploadedUrls.length === inputValues.imageUrls.length) {
+                data['imageUrl'] = JSON.stringify(uploadedUrls);
+                res = await productVariantService.createProductVariant(data);
+                if (res && res.code === 200) {
+                    toast.success("Thêm biến thể sản phẩm thành công");
+                } else {
+                    toast.error(res.message);
                 }
-            }
-
-        } else {
-            data['imageUrl'] = inputValues.imageUrls
-            res = await productVariantService.updateProductVariant(id, data);
-            if (res && res.code === 200) {
-                toast.success("Cập nhật biến thể sản phẩm thành công");
             } else {
-                toast.error(res.message);
+                toast.error("Lỗi khi tải ảnh lên");
+            }
+        } else {
+            // Update existing variant
+            const uploadedUrls = await uploadImages(inputValues.imageUrls);
+            if (uploadedUrls) {
+                data['imageUrl'] = JSON.stringify(uploadedUrls);
+                res = await productVariantService.updateProductVariant(id, data);
+                if (res && res.code === 200) {
+                    toast.success("Cập nhật biến thể sản phẩm thành công");
+                } else {
+                    toast.error(res.message);
+                }
+            } else {
+                toast.error("Lỗi khi tải ảnh lên");
             }
         }
-        setLoading(false)
+        setLoading(false);
     };
 
     return (
@@ -206,7 +215,7 @@ const AddProductVariant = () => {
                 <div className="card mb-4">
                     <div className="card-header">
                         <i className="fas fa-boxes me-1" />
-                        {isActionADD === true ? 'Thêm mới Biến Thể Sản Phẩm' : 'Cập nhật thông tin Biến Thể Sản Phẩm'}
+                        {isActionADD ? 'Thêm mới Biến Thể Sản Phẩm' : 'Cập nhật thông tin Biến Thể Sản Phẩm'}
                     </div>
                     <div className="card-body">
                         <form>
@@ -243,7 +252,7 @@ const AddProductVariant = () => {
                                         <option value="">Chọn màu</option>
                                         {colors && colors.length > 0 &&
                                             colors.map((color) => (
-                                                <option key={color.id} value={color.id} >
+                                                <option key={color.id} value={color.id}>
                                                     {color.name}
                                                 </option>
                                             ))
@@ -282,44 +291,41 @@ const AddProductVariant = () => {
                                         id="stock"
                                     />
                                 </div>
-                                {!id &&
-                                    <>
-                                        <div className="form-group col-md-6">
-                                            <label htmlFor="imageUrls">Ảnh Sản Phẩm</label>
-                                            <input
-                                                type="file"
-                                                multiple
-                                                accept="image/*"
-                                                onChange={handleImageChange}
-                                                className="form-control"
-                                                id="imageUrls"
-                                            />
-                                            <small>Tải lên tối đa 5 ảnh</small>
-                                        </div>
 
-                                        <div className="form-group col-md-12">
-                                            <label>Ảnh Đã Tải Lên</label>
-                                            <div className="d-flex flex-wrap">
-                                                {inputValues.imageUrls.map((image, index) => (
-                                                    <div key={index} className="position-relative me-3 mb-3">
-                                                        <img
-                                                            src={URL.createObjectURL(image)}
-                                                            alt={`image-${index}`}
-                                                            style={{ width: "100px", height: "100px", objectFit: "cover" }}
-                                                        />
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-danger btn-sm position-absolute top-0 end-0"
-                                                            onClick={() => handleRemoveImage(index)}
-                                                        >
-                                                            <i className="fas fa-times"></i>
-                                                        </button>
-                                                    </div>
-                                                ))}
+                                <div className="form-group col-md-6">
+                                    <label htmlFor="imageUrls">Ảnh Sản Phẩm</label>
+                                    <input
+                                        type="file"
+                                        multiple
+                                        accept="image/*"
+                                        onChange={handleImageChange}
+                                        className="form-control"
+                                        id="imageUrls"
+                                    />
+                                    <small>Tải lên tối đa 5 ảnh</small>
+                                </div>
+
+                                <div className="form-group col-md-12">
+                                    <label>Ảnh Đã Tải Lên</label>
+                                    <div className="d-flex flex-wrap">
+                                        {inputValues.imageUrls.map((image, index) => (
+                                            <div key={index} className="position-relative me-3 mb-3">
+                                                <img
+                                                    src={typeof image === 'string' ? image : URL.createObjectURL(image)}
+                                                    alt={`image-${index}`}
+                                                    style={{ width: "100px", height: "100px", objectFit: "cover" }}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-danger btn-sm position-absolute top-0 end-0"
+                                                    onClick={() => handleRemoveImage(index)}
+                                                >
+                                                    <i className="fas fa-times"></i>
+                                                </button>
                                             </div>
-                                        </div>
-
-                                    </>}
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
                             <button
                                 type="button"

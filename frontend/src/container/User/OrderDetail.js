@@ -7,6 +7,7 @@ import { updateStatusOrderService } from '../../services/userService';
 
 function OrderDetail({ DataOrder, loadDataOrder, isSearch }) {
     const [showCancelModal, setShowCancelModal] = useState(false);
+    const [showReceiveModal, setShowReceiveModal] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
 
     const handleShowCancelModal = (order) => {
@@ -17,6 +18,16 @@ function OrderDetail({ DataOrder, loadDataOrder, isSearch }) {
     const handleCloseCancelModal = () => {
         setSelectedOrder(null);
         setShowCancelModal(false);
+    };
+
+    const handleShowReceiveModal = (order) => {
+        setSelectedOrder(order);
+        setShowReceiveModal(true);
+    };
+
+    const handleCloseReceiveModal = () => {
+        setSelectedOrder(null);
+        setShowReceiveModal(false);
     };
 
     const handleCancelOrder = async () => {
@@ -36,15 +47,20 @@ function OrderDetail({ DataOrder, loadDataOrder, isSearch }) {
         handleCloseCancelModal();
     };
 
-    const handleReceivedOrder = async (orderId) => {
+    const handleReceivedOrder = async () => {
+        if (!selectedOrder) return;
+
         let res = await updateStatusOrderService({
-            id: orderId,
+            id: selectedOrder.id,
             statusId: 'S6'
         });
-        if (res && res.errCode == 0) {
+
+        if (res && res.errCode === 0) {
             toast.success("Đã nhận đơn hàng");
             loadDataOrder();
         }
+
+        handleCloseReceiveModal();
     };
 
     return (
@@ -54,11 +70,9 @@ function OrderDetail({ DataOrder, loadDataOrder, isSearch }) {
                     {DataOrder && DataOrder.length > 0 &&
                         DataOrder.map((order, index) => {
                             let totalPrice = 0;
-                            let statusHistory = order.statusHistory ? JSON.parse(order.statusHistory) : []
-                            console.log(statusHistory)
+                            let statusHistory = order.statusHistory ? JSON.parse(order.statusHistory) : [];
                             return (
                                 <div key={index}>
-
                                     <div className='box-list-order'>
                                         {order.statusId === 'S7' ? (
                                             <div className="order-status text-danger mt-1 mb-2">
@@ -77,21 +91,21 @@ function OrderDetail({ DataOrder, loadDataOrder, isSearch }) {
                                                         <h6>Lịch sử trạng thái:</h6>
                                                         <ul className="list-group">
                                                             {statusHistory.map((history, idx) => {
-                                                                let statusName = ""
+                                                                let statusName = "";
                                                                 if (history.statusId === 'S3') {
-                                                                    statusName = "Xác nhận"
-                                                                } 
+                                                                    statusName = "Xác nhận";
+                                                                }
                                                                 if (history.statusId === 'S4') {
-                                                                    statusName = "Đang giao"
-                                                                } 
+                                                                    statusName = "Đang giao";
+                                                                }
                                                                 if (history.statusId === 'S5') {
-                                                                    statusName = "Đã giao hàng"
-                                                                } 
+                                                                    statusName = "Đã giao hàng";
+                                                                }
                                                                 if (history.statusId === 'S6') {
-                                                                    statusName = "Đã giao hàng"
-                                                                } 
+                                                                    statusName = "Đã nhận hàng";
+                                                                }
                                                                 if (history.statusId === 'S7') {
-                                                                    statusName = "Hủy đơn"
+                                                                    statusName = "Hủy đơn";
                                                                 }
                                                                 return (
                                                                     <li key={idx} className="list-group-item d-flex justify-content-between align-items-center">
@@ -100,7 +114,7 @@ function OrderDetail({ DataOrder, loadDataOrder, isSearch }) {
                                                                             {formatDateTime(history.updatedAt)}
                                                                         </span>
                                                                     </li>
-                                                                )
+                                                                );
                                                             })}
                                                         </ul>
                                                     </div>
@@ -174,7 +188,7 @@ function OrderDetail({ DataOrder, loadDataOrder, isSearch }) {
                                                 </div>
                                             }
                                             {order.statusId === 'S5' &&
-                                                <div className='btn-buy' onClick={() => handleReceivedOrder(order.id)}>
+                                                <div className='btn-buy' onClick={() => handleShowReceiveModal(order)}>
                                                     Đã nhận hàng
                                                 </div>
                                             }
@@ -196,7 +210,7 @@ function OrderDetail({ DataOrder, loadDataOrder, isSearch }) {
                                 <div className="modal-header">
                                     <h5 className="modal-title">Xác nhận hủy đơn hàng</h5>
                                     <button type="button" className="close" onClick={handleCloseCancelModal}>
-                                        <span>&times;</span>
+                                        <span>×</span>
                                     </button>
                                 </div>
                                 <div className="modal-body">
@@ -212,11 +226,38 @@ function OrderDetail({ DataOrder, loadDataOrder, isSearch }) {
                     <div className="modal-backdrop fade show"></div>
                 </>
             )}
+
+            {/* Modal xác nhận đã nhận hàng */}
+            {showReceiveModal && (
+                <>
+                    <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1" role="dialog">
+                        <div className="modal-dialog modal-dialog-centered" role="document">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h5 className="modal-title">Xác nhận đã nhận hàng</h5>
+                                    <button type="button" className="close" onClick={handleCloseReceiveModal}>
+                                        <span>×</span>
+                                    </button>
+                                </div>
+                                <div className="modal-body">
+                                    <p>Bạn có chắc chắn đã nhận được đơn hàng này không?</p>
+                                </div>
+                                <div className="modal-footer">
+                                    <button type="button" className="btn btn-secondary" onClick={handleCloseReceiveModal}>Không</button>
+                                    <button type="button" className="btn btn-primary" onClick={handleReceivedOrder}>Xác nhận</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="modal-backdrop fade show"></div>
+                </>
+            )}
         </div>
     );
 }
 
 export default OrderDetail;
+
 function formatDateTime(dateString) {
     const date = new Date(dateString);
     return date.toLocaleString('vi-VN', {
