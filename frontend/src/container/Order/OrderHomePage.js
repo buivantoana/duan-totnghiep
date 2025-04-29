@@ -15,7 +15,41 @@ import ShopCartItem from '../../component/ShopCart/ShopCartItem';
 import VoucherModal from '../ShopCart/VoucherModal';
 import CommonUtils from '../../utils/CommonUtils';
 import { EXCHANGE_RATES } from '../../utils/constant'
-import ApplyPointsCheckbox from './ApplyPointsCheckbox';
+
+function ApplyPointsInput({ userId, onApplyPoints, userPoints }) {
+    const [inputPoints, setInputPoints] = useState(0);
+
+    const handlePointsChange = (e) => {
+        const value = parseInt(e.target.value) || 0;
+        if (value >= 0 && value <= userPoints) {
+            setInputPoints(value);
+            onApplyPoints(value);
+        } else if (value > userPoints) {
+            setInputPoints(userPoints);
+            onApplyPoints(userPoints);
+            toast.warning(`Bạn chỉ có ${userPoints} điểm!`);
+        } else {
+            setInputPoints(0);
+            onApplyPoints(0);
+        }
+    };
+
+    return (
+        <div className="apply-points-input">
+            <label>Sử dụng điểm thưởng ({userPoints} điểm khả dụng):</label>
+            <input
+                type="number"
+                value={inputPoints}
+                onChange={handlePointsChange}
+                min="0"
+                max={userPoints}
+                placeholder="Nhập số điểm"
+                style={{ width: '100px', marginLeft: '10px' }}
+            />
+        </div>
+    );
+}
+
 function OrderHomePage(props) {
     const dispatch = useDispatch()
     const [dataAddressUser, setdataAddressUser] = useState([])
@@ -39,6 +73,8 @@ function OrderHomePage(props) {
     const [activeTypeOnlPayment, setactiveTypeOnlPayment] = useState(1)
     const [note, setnote] = useState('');
     const [points, setPoints] = useState(0);
+    const [pointsToApply, setPointsToApply] = useState(0);
+    
     useEffect(() => {
         dispatch(getItemCartStart(userId))
         let fetchDataAddress = async () => {
@@ -50,7 +86,7 @@ function OrderHomePage(props) {
                 limit: '',
                 offset: '',
                 keyword: '',
-                type:true
+                type: true
             })
             if (res && res.errCode === 0) {
                 settypeShip(res.data)
@@ -61,10 +97,23 @@ function OrderHomePage(props) {
         if (dataTypeShip && dataTypeShip.price) {
             setpriceShip(dataTypeShip.price)
         }
-
     }, [])
 
 
+    useEffect(() => {
+        if (userId) {
+           (async () => {
+              try {
+                 let user = await getDetailUserById(userId)
+                 if (user && user.errCode === 0) {
+                    setPointsToApply(user.data.points)
+                 }
+              } catch (error) {
+  
+              }
+           })()
+        }
+     }, [userId])
     let loadDataAddress = async (userId) => {
         let res = await getAllAddressUserByUserIdService(userId)
         if (res && res.errCode === 0) {
@@ -72,16 +121,17 @@ function OrderHomePage(props) {
             setaddressUserId(res.data[0].id)
         }
     }
+    
     let closeModaAddressUser = () => {
         setisOpenModalAddressUser(false)
     }
+    
     let handleOpenAddressUserModal = async () => {
-
         setisOpenModalAddressUser(true)
     }
+    
     let sendDataFromModalAddress = async (data) => {
         setisOpenModalAddressUser(false)
-
         let res = await createNewAddressUserrService({
             shipName: data.shipName,
             shipAdress: data.shipAdress,
@@ -96,28 +146,27 @@ function OrderHomePage(props) {
             toast.error(res.errMessage)
         }
     }
+    
     let handleOnChange = (id, index) => {
         setaddressUserId(id)
         setstt(index)
     }
+    
     let handleOpenModal = () => {
         setisOpenModal(true)
-
-
     }
+    
     let closeModal = () => {
         setisOpenModal(false)
-
     }
+    
     let closeModalFromVoucherItem = () => {
         setisOpenModal(false)
     }
+    
     let totalPriceDiscount = (price, discount) => {
-
         if (discount.voucherData.typeVoucherOfVoucherData.typeVoucher === "percent") {
-
             if (((price * discount.voucherData.typeVoucherOfVoucherData.value) / 100) > discount.voucherData.typeVoucherOfVoucherData.maxValue) {
-
                 return price - discount.voucherData.typeVoucherOfVoucherData.maxValue
             } else {
                 return price - ((price * discount.voucherData.typeVoucherOfVoucherData.value) / 100)
@@ -125,22 +174,22 @@ function OrderHomePage(props) {
         } else {
             return price - discount.voucherData.typeVoucherOfVoucherData.maxValue
         }
-
     }
+    
     let handleChooseTypeShip = (item) => {
         dispatch(ChooseTypeShipStart(item))
         setpriceShip(item.price)
     }
+    
     let fetchExchangeRate = async () => {
         let res = await getExchangeRate()
         if (res) setratesData(res)
     }
+    
     let handleSaveOrder = async () => {
-
         if (!dataTypeShip.id) {
             toast.error("Chưa chọn đơn vị vận chuyển")
         } else {
-
             let result = [];
             dataCart.map((item, index) => {
                 let object = {};
@@ -154,19 +203,6 @@ function OrderHomePage(props) {
             })
 
             if (activeTypePayment == 0) {
-                console.log({
-                    orderdate: Date.now(),
-                    addressUserId: addressUserId,
-                    isPaymentOnlien: activeTypePayment === 1 ? 1 : 0,
-                    typeShipId: dataTypeShip.id,
-                    voucherId: dataVoucher.voucherId,
-                    note: note,
-                    userId: userId,
-                    arrDataShopCart: result,
-                    total: dataVoucher && dataVoucher.voucherData ? totalPriceDiscount(price, dataVoucher) + priceShip - points : price + (+priceShip) - points,
-                    points: points
-
-                });
                 let res = await createNewOrderService({
                     orderdate: Date.now(),
                     addressUserId: addressUserId,
@@ -176,9 +212,15 @@ function OrderHomePage(props) {
                     note: note,
                     userId: userId,
                     arrDataShopCart: result,
-                    total: dataVoucher && dataVoucher.voucherData ? totalPriceDiscount(price, dataVoucher) + priceShip - points : price + (+priceShip) - points,
-                    points: points
-
+                    points: points,
+                    total: dataVoucher && dataVoucher.voucherData
+                        ? Math.max(
+                            ((totalPriceDiscount(price, dataVoucher) > 0
+                                ? (totalPriceDiscount(price, dataVoucher) + priceShip)
+                                : 0) + priceShip - points),
+                            0
+                        )
+                        : Math.max(price + (+priceShip) - points, 0)
                 })
                 if (res && res.errCode === 0) {
                     toast.success("Đặt hàng thành công")
@@ -190,7 +232,14 @@ function OrderHomePage(props) {
                     toast.error(res.errMessage)
                 }
             } else {
-                total = dataVoucher && dataVoucher.voucherData ? totalPriceDiscount(price, dataVoucher) + priceShip - points : price + (+priceShip) - points
+                total = dataVoucher && dataVoucher.voucherData
+                    ? Math.max(
+                        ((totalPriceDiscount(price, dataVoucher) > 0
+                            ? (totalPriceDiscount(price, dataVoucher) + priceShip)
+                            : 0) + priceShip - points),
+                        0
+                    )
+                    : Math.max(price + (+priceShip) - points, 0)
                 total = parseFloat((total / EXCHANGE_RATES.USD).toFixed(2))
                 if (activeTypeOnlPayment === 1) {
                     let res = await paymentOrderService({
@@ -198,8 +247,6 @@ function OrderHomePage(props) {
                         result: result
                     })
                     if (res && res.errCode == 0) {
-                        console.log("toan1");
-
                         localStorage.setItem("orderData", JSON.stringify({
                             orderdate: Date.now(),
                             addressUserId: addressUserId,
@@ -215,11 +262,8 @@ function OrderHomePage(props) {
                         setTimeout(() => {
                             window.location.href = res.link
                         }, 2000)
-
                     }
-
                 } else {
-                    console.log("toan1");
                     history.push({
                         pathname: '/payment/vnpay',
                         orderData: {
@@ -232,26 +276,27 @@ function OrderHomePage(props) {
                             userId: userId,
                             points: points,
                             arrDataShopCart: result,
-                            total: dataVoucher && dataVoucher.voucherData ? totalPriceDiscount(price, dataVoucher) + priceShip - points : price + (+priceShip) - points
+                            total: dataVoucher && dataVoucher.voucherData
+                                ? Math.max(
+                                    ((totalPriceDiscount(price, dataVoucher) > 0
+                                        ? (totalPriceDiscount(price, dataVoucher) + priceShip)
+                                        : 0) + priceShip - points),
+                                    0
+                                )
+                                : Math.max(price + (+priceShip) - points, 0)
                         },
-
                     })
                 }
-
             }
-
         }
     }
 
     const handleApplyPoints = (points) => {
-
         setPoints(points)
     };
-    console.log(points);
+
     return (
-
         <>
-
             <div className="wrap-order">
                 <div className="wrap-heading-order">
                     <NavLink to="/" className="navbar-brand logo_h">
@@ -273,10 +318,8 @@ function OrderHomePage(props) {
                                         <i className="fas fa-plus"></i>
                                         <span onClick={() => handleOpenAddressUserModal()}>Thêm địa chỉ mới</span>
                                     </div>
-
                                 </div>
                             }
-
                         </div>
                         <div className="content-down">
                             {isChangeAdress === false ?
@@ -291,11 +334,9 @@ function OrderHomePage(props) {
                                     </div>
                                 </>
                                 :
-
                                 <div>
                                     {dataAddressUser && dataAddressUser.length > 0 &&
                                         dataAddressUser.map((item, index) => {
-
                                             return (
                                                 <div key={index} className="form-check ">
                                                     <input className="form-check-input" checked={item.id === addressUserId ? true : false} onChange={() => handleOnChange(item.id, index)} type="radio" name="addressRadios" id={`addressRadios${index}`} />
@@ -313,28 +354,22 @@ function OrderHomePage(props) {
                                             )
                                         })
                                     }
-
-
                                 </div>
                             }
-
                             <div className="content-right">
                                 <span className="text-default">Mặc định</span>
                                 {isChangeAdress === false &&
                                     <span onClick={() => setisChangeAdress(true)} className="text-change">Thay đổi</span>
                                 }
-
                             </div>
                         </div>
                         {isChangeAdress === true &&
                             <div className="box-action">
-
                                 <div onClick={() => setisChangeAdress(false)} className="wrap-back">
                                     <span >Trở về</span>
                                 </div>
                             </div>
                         }
-
                     </div>
                 </div>
                 <div className="wrap-order-item">
@@ -345,20 +380,16 @@ function OrderHomePage(props) {
                                     <table className="table">
                                         <thead>
                                             <tr>
-
                                                 <th scope="col">Sản phẩm</th>
                                                 <th scope="col">Giá</th>
                                                 <th style={{ textAlign: 'center' }} scope="col">Số lượng</th>
                                                 <th style={{ textAlign: 'center' }} scope="col">Tổng tiền</th>
-
                                             </tr>
                                         </thead>
                                         <tbody>
-
                                             {dataCart && dataCart.length > 0 &&
                                                 dataCart.map((item, index) => {
                                                     price += item.quantity * item.product.discountPrice
-
                                                     let name = `${item.product.name}  - ${item.productdetailsizeId}`
                                                     return (
                                                         <ShopCartItem isOrder={false} id={item.id} productId={item.product.id} color={item.productdetailcolor} productdetailsizeId={item.productdetailsizeId} key={index} name={name} price={item.product.discountPrice} quantity={item.quantity} image={item.product.image} />
@@ -367,12 +398,9 @@ function OrderHomePage(props) {
                                             }
                                         </tbody>
                                     </table>
-
                                 </div>
                             </div>
                             <div className="box-shipping">
-
-
                                 <h6>
                                     Chọn đơn vị vận chuyển
                                 </h6>
@@ -389,14 +417,8 @@ function OrderHomePage(props) {
                                             )
                                         })
                                     }
-
-
                                 </div>
-
-
-
                             </div>
-
                             <div className="box-shopcart-bottom">
                                 <div className="content-left">
                                     <div className="wrap-voucher">
@@ -406,7 +428,6 @@ function OrderHomePage(props) {
                                         {dataVoucher && dataVoucher.voucherData &&
                                             <span className="choose-voucher">Mã voucher: {dataVoucher.voucherData.codeVoucher}</span>
                                         }
-
                                     </div>
                                     <div className="wrap-note">
                                         <span>Lời Nhắn:</span>
@@ -416,27 +437,18 @@ function OrderHomePage(props) {
                                 <div className="content-right">
                                     <div className="wrap-price">
                                         <span className="text-total">Tổng thanh toán ({dataCart && dataCart.length} sản phẩm): </span>
-
-                                        <span className="text-price">{dataVoucher && dataVoucher.voucherData ? CommonUtils.formatter.format(totalPriceDiscount(price, dataVoucher) + priceShip) : CommonUtils.formatter.format(price + (+priceShip))}</span>
+                                        <span className="text-price">{dataVoucher && dataVoucher.voucherData ? CommonUtils.formatter.format(((totalPriceDiscount(price, dataVoucher)) > 0 ? (totalPriceDiscount(price, dataVoucher) + priceShip) : 0) + priceShip) : CommonUtils.formatter.format(price + (+priceShip))}</span>
                                     </div>
-
-
                                 </div>
-
                             </div>
-
                         </div>
-
-
                     </section>
                 </div>
                 <div className="wrap-payment">
                     <div className="content-top">
-
                         <div style={{ display: 'flex', gap: '10px' }}>
                             <span>Phương Thức Thanh Toán</span>
                             <div onClick={() => setactiveTypePayment(1)} className={activeTypePayment === 1 ? 'box-type-payment active' : 'box-type-payment'}>Thanh toán Online</div>
-
                             <div onClick={() => setactiveTypePayment(0)} className={activeTypePayment === 0 ? 'box-type-payment active' : 'box-type-payment'}>Thanh toán khi nhận hàng</div>
                         </div>
                         {activeTypePayment != 0 &&
@@ -445,36 +457,48 @@ function OrderHomePage(props) {
                                 <div onClick={() => setactiveTypeOnlPayment(2)} className={activeTypeOnlPayment === 2 ? 'box-type-payment activeOnl' : 'box-type-payment'}>Thanh toán VNPAY</div>
                             </div>
                         }
-
-
-
                     </div>
-
                     <div className="content-bottom">
-
                         <div className="wrap-bottom">
-                            {JSON.parse(localStorage.getItem("userData")) && <ApplyPointsCheckbox userId={userId} onApplyPoints={handleApplyPoints} userPoints={JSON.parse(localStorage.getItem("userData")).points} />}
+                            {JSON.parse(localStorage.getItem("userData")) && 
+                                <ApplyPointsInput 
+                                    userId={userId} 
+                                    onApplyPoints={handleApplyPoints} 
+                                    userPoints={pointsToApply} 
+                                />
+                            }
                             <div className="box-flex">
                                 <div className="head">Tổng tiền hàng</div>
-                                <div >{CommonUtils.formatter.format(price)}</div>
+                                <div>{CommonUtils.formatter.format(price)}</div>
                             </div>
                             <div className="box-flex">
                                 <div className="head">Tổng giảm giá</div>
-                                <div >{dataVoucher && dataVoucher.voucherData ? CommonUtils.formatter.format(price - totalPriceDiscount(price, dataVoucher)) : CommonUtils.formatter.format(0)}</div>
+                                <div>{dataVoucher && dataVoucher.voucherData ? CommonUtils.formatter.format(price - totalPriceDiscount(price, dataVoucher)) : CommonUtils.formatter.format(0)}</div>
                             </div>
                             <div className="box-flex">
                                 <div className="head">Phí vận chuyển</div>
-                                <div >{CommonUtils.formatter.format(priceShip)}</div>
+                                <div>{CommonUtils.formatter.format(priceShip)}</div>
                             </div>
-
                             <div className="box-flex">
                                 <div className="head">Tổng thanh toán:</div>
-                                <div className="money">${dataVoucher && dataVoucher.voucherData ? CommonUtils.formatter.format(totalPriceDiscount(price, dataVoucher) + priceShip - points) : CommonUtils.formatter.format(price + (+priceShip) - points)}</div>
+                                <div className="money">${
+                                    dataVoucher && dataVoucher.voucherData
+                                        ? CommonUtils.formatter.format(
+                                            Math.max(
+                                                ((totalPriceDiscount(price, dataVoucher) > 0
+                                                    ? (totalPriceDiscount(price, dataVoucher) + priceShip)
+                                                    : 0) + priceShip - points),
+                                                0
+                                            )
+                                        )
+                                        : CommonUtils.formatter.format(
+                                            Math.max(price + (+priceShip) - points, 0)
+                                        )
+                                }</div>
                             </div>
                             <div className="box-flex">
                                 <a onClick={() => handleSaveOrder()} className="main_btn">Đặt hàng</a>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -484,7 +508,6 @@ function OrderHomePage(props) {
             </div>
             <div style={{ width: '100%', height: '100px', backgroundColor: '#f5f5f5' }}></div>
         </>
-
     );
 }
 

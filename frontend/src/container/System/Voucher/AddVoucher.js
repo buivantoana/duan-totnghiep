@@ -1,183 +1,420 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
-import DatePicker from '../../../component/input/DatePicker';
+// src/components/AddVoucher.jsx
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { useParams } from "react-router-dom";
-import 'react-toastify/dist/ReactToastify.css';
-import { getSelectTypeVoucher, createNewVoucherService, getDetailVoucherByIdService, updateVoucherService } from '../../../services/userService';
 import moment from 'moment';
-const AddVoucher = (props) => {
+import DatePicker from '../../../component/input/DatePicker'; // Adjust path to your DatePicker component
+import {
+  getSelectTypeVoucher,
+  createNewVoucherService,
+  getDetailVoucherByIdService,
+  updateVoucherService,
+  createNewTypeVoucherService,
+  getDetailTypeVoucherByIdService,
+  updateTypeVoucherService,
+} from '../../../services/userService';
+import 'react-toastify/dist/ReactToastify.css';
+import { useFetchAllcode } from '../../customize/fetch';
 
+const AddVoucher = () => {
+  const { id } = useParams();
+  const { data: dataTypeVoucher } = useFetchAllcode('DISCOUNT');
+  const [dataTypeVoucherList, setDataTypeVoucherList] = useState([]);
+  const [isActionADD, setIsActionADD] = useState(true);
 
+  const [inputValues, setInputValues] = useState({
+    typeVoucher: '',
+    value: '',
+    maxValue: '',
+    minValue: '',
+    fromDate: '',
+    toDate: '',
+    typeVoucherId: '',
+    amount: '',
+    codeVoucher: '',
+    isChangeFromDate: false,
+    isChangeToDate: false,
+    fromDateUpdate: '',
+    toDateUpdate: '',
+  });
 
-
-    const [dataTypeVoucher, setdataTypeVoucher] = useState([])
-
-    const { id } = useParams();
-    const [inputValues, setInputValues] = useState({
-        fromDate: '', toDate: '', typeVoucherId: '', amount: '', codeVoucher: '', isChangeFromDate: false, isChangeToDate: false, isActionADD: true,
-        fromDateUpdate: '', toDateUpdate: ''
-    });
-    if (dataTypeVoucher && dataTypeVoucher.length > 0 && inputValues.typeVoucherId === '') {
-
-        setInputValues({ ...inputValues, ["typeVoucherId"]: dataTypeVoucher[0].id })
+  // Initialize typeVoucher if empty
+  useEffect(() => {
+    if (dataTypeVoucher && dataTypeVoucher.length > 0 && !inputValues.typeVoucher) {
+      setInputValues({ ...inputValues, typeVoucher: dataTypeVoucher[0].code });
     }
-    useEffect(() => {
-        let fetchTypeVoucher = async () => {
-            let typevoucher = await getSelectTypeVoucher()
-            if (typevoucher && typevoucher.errCode === 0) {
-                setdataTypeVoucher(typevoucher.data)
-            }
-        }
-        fetchTypeVoucher()
-        if (id) {
-            let fetchVoucher = async () => {
-                let voucher = await getDetailVoucherByIdService(id)
-                if (voucher && voucher.errCode === 0) {
-                    setStateVoucher(voucher.data)
-                }
-            }
-            fetchVoucher()
-        }
-    }, [])
-    let setStateVoucher = (data) => {
-        console.log(data.toDate)
-        setInputValues({
-            ...inputValues,
-            ["fromDate"]: moment.unix(+data.fromDate / 1000).locale('vi').format('DD/MM/YYYY'),
-            ["toDate"]: moment.unix(+data.toDate / 1000).locale('vi').format('DD/MM/YYYY'),
-            ["typeVoucherId"]: data.typeVoucherId,
-            ["amount"]: data.amount,
-            ["codeVoucher"]: data.codeVoucher,
-            ["isActionADD"]: false,
-            ["fromDateUpdate"]: data.fromDate,
-            ["toDateUpdate"]: data.toDate
-        })
-    }
-    const handleOnChange = event => {
-        const { name, value } = event.target;
-        setInputValues({ ...inputValues, [name]: value });
+  }, [dataTypeVoucher]);
 
+  // Fetch type voucher list and voucher details (if editing)
+  useEffect(() => {
+    const fetchTypeVoucher = async () => {
+      const typeVoucher = await getSelectTypeVoucher();
+      if (typeVoucher && typeVoucher.errCode === 0) {
+        setDataTypeVoucherList(typeVoucher.data);
+        if (typeVoucher.data.length > 0 && !inputValues.typeVoucherId) {
+          setInputValues((prev) => ({ ...prev, typeVoucherId: typeVoucher.data[0].id }));
+        }
+      }
     };
-    let handleOnChangeDatePickerFromDate = (date) => {
-        setInputValues({
-            ...inputValues,
-            ["fromDate"]: date[0],
-            ["isChangeFromDate"]: true
-        })
+    fetchTypeVoucher();
 
+    if (id) {
+      const fetchVoucher = async () => {
+        setIsActionADD(false);
+        const voucher = await getDetailVoucherByIdService(id);
+        if (voucher && voucher.errCode === 0) {
+          const typeVoucher = await getDetailTypeVoucherByIdService(voucher.data.typeVoucherId);
+          if (typeVoucher && typeVoucher.errCode === 0) {
+            setInputValues({
+              ...inputValues,
+              fromDate: moment.unix(+voucher.data.fromDate / 1000).locale('vi').format('DD/MM/YYYY'),
+              toDate: moment.unix(+voucher.data.toDate / 1000).locale('vi').format('DD/MM/YYYY'),
+              typeVoucherId: voucher.data.typeVoucherId,
+              amount: voucher.data.amount,
+              codeVoucher: voucher.data.codeVoucher,
+              isActionADD: false,
+              fromDateUpdate: voucher.data.fromDate,
+              toDateUpdate: voucher.data.toDate,
+              typeVoucher: typeVoucher.data.typeVoucher,
+              value: typeVoucher.data.value,
+              maxValue: typeVoucher.data.maxValue,
+              minValue: typeVoucher.data.minValue,
+            });
+          }
+        }
+      };
+      fetchVoucher();
     }
-    let handleOnChangeDatePickerToDate = (date) => {
-        setInputValues({
-            ...inputValues,
-            ["toDate"]: date[0],
-            ["isChangeToDate"]: true
-        })
+  }, [id]);
 
+  const handleOnChange = (event) => {
+    const { name, value } = event.target;
+    setInputValues({ ...inputValues, [name]: value });
+  };
+
+  const handleOnChangeDatePickerFromDate = (date) => {
+    setInputValues({
+      ...inputValues,
+      fromDate: date[0],
+      isChangeFromDate: true,
+    });
+  };
+
+  const handleOnChangeDatePickerToDate = (date) => {
+    setInputValues({
+      ...inputValues,
+      toDate: date[0],
+      isChangeToDate: true,
+    });
+  };
+
+  const handleSaveVoucher = async () => {
+    // Validate required fields
+    const requiredFields = [
+      'typeVoucher',
+      'value',
+      'maxValue',
+      'minValue',
+      'fromDate',
+      'toDate',
+      'typeVoucherId',
+      'amount',
+      'codeVoucher',
+    ];
+    for (const field of requiredFields) {
+      if (!inputValues[field]) {
+        toast.error('Tất cả các trường đều là bắt buộc!');
+        return;
+      }
     }
-    let handleSaveInforVoucher = async () => {
-        if (!inputValues.fromDate || !inputValues.toDate || !inputValues.typeVoucherId || !inputValues.amount || !inputValues.codeVoucher) {
-            toast.error("Tất cả các trường đều là bắt buộc!");
-            return;
-        }
-    
-        // Kiểm tra số lượng mã voucher không âm và là số
-        if (isNaN(inputValues.amount) || Number(inputValues.amount) < 0) {
-            toast.error("Số lượng mã voucher phải là số và không được âm!");
-            return;
-        }
-        if (inputValues.isActionADD === true) {
-            let response = await createNewVoucherService({
-                fromDate: new Date(inputValues.fromDate).getTime(),
-                toDate: new Date(inputValues.toDate).getTime(),
-                typeVoucherId: inputValues.typeVoucherId,
-                amount: inputValues.amount,
-                codeVoucher: inputValues.codeVoucher
-            })
-            if (response && response.errCode === 0) {
-                toast.success("Tạo mã voucher thành công !")
-                setInputValues({
-                    ...inputValues,
-                    ["fromDate"]: '',
-                    ["toDate"]: '',
-                    ["typeVoucherId"]: '',
-                    ["amount"]: '',
-                    ["codeVoucher"]: '',
-                })
-            } else {
-                toast.error(response.errMessage)
-            }
+
+    // Validate numeric fields
+    const numericFields = {
+      value: 'Giá trị',
+      maxValue: 'Giá trị tối đa',
+      minValue: 'Giá trị tối thiểu',
+      amount: 'Số lượng mã',
+    };
+    for (const [field, label] of Object.entries(numericFields)) {
+      if (isNaN(inputValues[field]) || Number(inputValues[field]) < 0) {
+        toast.error(`${label} phải là số và không được âm!`);
+        return;
+      }
+    }
+
+    // Validate typeVoucher specific rules
+    if (inputValues.typeVoucher === 'percent' && Number(inputValues.value) > 100) {
+      toast.error('Giá trị phần trăm không được lớn hơn 100!');
+      return;
+    }
+
+    // Validate minValue <= maxValue
+    if (Number(inputValues.minValue) > Number(inputValues.maxValue)) {
+      toast.error('Giá trị tối thiểu phải nhỏ hơn hoặc bằng giá trị tối đa!');
+      return;
+    }
+
+    // Validate fromDate <= toDate
+    if (new Date(inputValues.fromDate) > new Date(inputValues.toDate)) {
+      toast.error('Ngày bắt đầu phải trước hoặc bằng ngày kết thúc!');
+      return;
+    }
+
+    try {
+      if (isActionADD) {
+        // Create new type voucher
+        const typeVoucherRes = await createNewTypeVoucherService({
+          typeVoucher: inputValues.typeVoucher,
+          value: inputValues.value,
+          maxValue: inputValues.maxValue,
+          minValue: inputValues.minValue,
+        });
+
+        if (typeVoucherRes && typeVoucherRes.errCode === 0) {
+          // Create new voucher
+          const voucherRes = await createNewVoucherService({
+            fromDate: new Date(inputValues.fromDate).getTime(),
+            toDate: new Date(inputValues.toDate).getTime(),
+            typeVoucherId: typeVoucherRes.id,
+            amount: inputValues.amount,
+            codeVoucher: inputValues.codeVoucher,
+          });
+
+          if (voucherRes && voucherRes.errCode === 0) {
+            toast.success('Tạo voucher thành công!');
+            setInputValues({
+              typeVoucher: dataTypeVoucher[0]?.code || '',
+              value: '',
+              maxValue: '',
+              minValue: '',
+              fromDate: '',
+              toDate: '',
+              typeVoucherId: voucherRes.id,
+              amount: '',
+              codeVoucher: '',
+              isChangeFromDate: false,
+              isChangeToDate: false,
+              fromDateUpdate: '',
+              toDateUpdate: '',
+            });
+          } else {
+            toast.error(voucherRes?.errMessage || 'Tạo voucher thất bại!');
+          }
         } else {
-
-            let response = await updateVoucherService({
-                toDate: inputValues.isChangeToDate === false ? inputValues.toDateUpdate : new Date(inputValues.toDate).getTime(),
-                fromDate: inputValues.isChangeFromDate === false ? inputValues.fromDateUpdate : new Date(inputValues.fromDate).getTime(),
-
-                typeVoucherId: inputValues.typeVoucherId,
-                amount: inputValues.amount,
-                codeVoucher: inputValues.codeVoucher,
-                id: id
-            })
-            if (response && response.errCode === 0) {
-                toast.success("Cập nhật voucher thành công !")
-
-            } else toast.error(response.errMessage)
+          toast.error(typeVoucherRes?.errMessage || 'Tạo loại voucher thất bại!');
         }
+      } else {
+        // Update type voucher
+        const typeVoucherRes = await updateTypeVoucherService({
+          typeVoucher: inputValues.typeVoucher,
+          value: inputValues.value,
+          maxValue: inputValues.maxValue,
+          minValue: inputValues.minValue,
+          id: inputValues.typeVoucherId,
+        });
+
+        if (typeVoucherRes && typeVoucherRes.errCode === 0) {
+          // Update voucher
+          const voucherRes = await updateVoucherService({
+            fromDate: inputValues.isChangeFromDate
+              ? new Date(inputValues.fromDate).getTime()
+              : inputValues.fromDateUpdate,
+            toDate: inputValues.isChangeToDate
+              ? new Date(inputValues.toDate).getTime()
+              : inputValues.toDateUpdate,
+            typeVoucherId: inputValues.typeVoucherId,
+            amount: inputValues.amount,
+            codeVoucher: inputValues.codeVoucher,
+            id,
+          });
+
+          if (voucherRes && voucherRes.errCode === 0) {
+            toast.success('Cập nhật voucher thành công!');
+          } else {
+            toast.error(voucherRes?.errMessage || 'Cập nhật voucher thất bại!');
+          }
+        } else {
+          toast.error(typeVoucherRes?.errMessage || 'Cập nhật loại voucher thất bại!');
+        }
+      }
+    } catch (error) {
+      toast.error('Đã xảy ra lỗi, vui lòng thử lại!');
+      console.error(error);
     }
-    return (
-        <div className="container-fluid px-4">
-            <h1 className="mt-4">Quản lý mã voucher</h1>
+  };
 
+  return (
+    <div className="container-fluid px-4">
+      <h1 className="mt-4">Quản lý voucher</h1>
+      {/* Tailwind: <h1 className="mt-4 text-2xl font-bold">Quản lý voucher</h1> */}
 
-            <div className="card mb-4">
-                <div className="card-header">
-                    <i className="fas fa-table me-1" />
-                    {inputValues.isActionADD === true ? 'Thêm mới mã voucherr' : 'Cập nhật thông tin mã voucher'}
-                </div>
-                <div className="card-body">
-                    <form>
-                        <div className="form-row">
-                            <div className="form-group col-md-6">
-                                <label htmlFor="inputEmail4">Ngày bắt đầu</label>
-                                <DatePicker className="form-control" onChange={handleOnChangeDatePickerFromDate}
-                                    value={inputValues.fromDate}
-
-                                />
-                            </div>
-                            <div className="form-group col-md-6">
-                                <label htmlFor="inputPassword4">Ngày kết thúc</label>
-                                <DatePicker className="form-control" onChange={handleOnChangeDatePickerToDate}
-                                    value={inputValues.toDate}
-
-                                />
-                            </div>
-                            <div className="form-group col-md-4">
-                                <label htmlFor="inputEmail4">Loại voucher</label>
-                                <select value={inputValues.typeVoucherId} name="typeVoucherId" onChange={(event) => handleOnChange(event)} id="inputState" className="form-control">
-                                    {dataTypeVoucher && dataTypeVoucher.length > 0 &&
-                                        dataTypeVoucher.map((item, index) => {
-                                            let name = `${item.value} ${item.typeVoucherData.value}`
-                                            return (
-                                                <option key={index} value={item.id}>{name}</option>
-                                            )
-                                        })
-                                    }
-                                </select>
-                            </div>
-                            <div className="form-group col-md-4">
-                                <label htmlFor="inputPassword4">Số lượng mã</label>
-                                <input type="number" value={inputValues.amount} name="amount" onChange={(event) => handleOnChange(event)} className="form-control" id="inputPassword4" />
-                            </div>
-                            <div className="form-group col-md-4">
-                                <label htmlFor="inputPassword4">Mã voucher</label>
-                                <input type="text" value={inputValues.codeVoucher} name="codeVoucher" onChange={(event) => handleOnChange(event)} className="form-control" id="inputPassword4" />
-                            </div>
-                        </div>
-                        <button onClick={() => handleSaveInforVoucher()} type="button" className="btn btn-primary">Lưu thông tin</button>
-                    </form>
-                </div>
-            </div>
+      <div className="card mb-4">
+        <div className="card-header">
+          <i className="fas fa-table me-1" />
+          {isActionADD ? 'Thêm mới voucher' : 'Cập nhật thông tin voucher'}
         </div>
-    )
-}
+        {/* Tailwind: <div className="bg-gray-100 p-4 rounded-lg mb-4 flex items-center">
+            <i className="fas fa-table mr-2" />
+            {isActionADD ? 'Thêm mới voucher' : 'Cập nhật thông tin voucher'}
+          </div> */}
+
+        <div className="card-body">
+          <form>
+            <div className="form-row">
+              {/* Type Voucher */}
+              <div className="form-group col-md-6">
+                <label htmlFor="typeVoucher">Loại voucher</label>
+                <select
+                  value={inputValues.typeVoucher}
+                  name="typeVoucher"
+                  onChange={handleOnChange}
+                  id="typeVoucher"
+                  className="form-control"
+                >
+                  {dataTypeVoucher &&
+                    dataTypeVoucher.map((item, index) => (
+                      <option key={index} value={item.code}>
+                        {item.value}
+                      </option>
+                    ))}
+                </select>
+                {/* Tailwind: 
+                <select
+                  className="w-full p-2 border rounded-md"
+                  ...
+                >
+                */}
+              </div>
+
+              {/* Value */}
+              <div className="form-group col-md-6">
+                <label htmlFor="value">Giá trị</label>
+                <input
+                  type="text"
+                  value={inputValues.value}
+                  name="value"
+                  onChange={handleOnChange}
+                  className="form-control"
+                  id="value"
+                />
+                {/* Tailwind: <input className="w-full p-2 border rounded-md" ... /> */}
+              </div>
+
+              {/* Min Value */}
+              <div className="form-group col-md-6">
+                <label htmlFor="minValue">Giá trị tối thiểu</label>
+                <input
+                  type="number"
+                  value={inputValues.minValue}
+                  name="minValue"
+                  onChange={handleOnChange}
+                  className="form-control"
+                  id="minValue"
+                />
+                {/* Tailwind: <input type="number" className="w-full p-2 border rounded-md" ... /> */}
+              </div>
+
+              {/* Max Value */}
+              <div className="form-group col-md-6">
+                <label htmlFor="maxValue">Giá trị tối đa</label>
+                <input
+                  type="number"
+                  value={inputValues.maxValue}
+                  name="maxValue"
+                  onChange={handleOnChange}
+                  className="form-control"
+                  id="maxValue"
+                />
+                {/* Tailwind: <input type="number" className="w-full p-2 border rounded-md" ... /> */}
+              </div>
+
+              {/* From Date */}
+              <div className="form-group col-md-6">
+                <label htmlFor="fromDate">Ngày bắt đầu</label>
+                <DatePicker
+                  className="form-control"
+                  onChange={handleOnChangeDatePickerFromDate}
+                  value={inputValues.fromDate}
+                />
+                {/* Tailwind: <DatePicker className="w-full p-2 border rounded-md" ... /> */}
+              </div>
+
+              {/* To Date */}
+              <div className="form-group col-md-6">
+                <label htmlFor="toDate">Ngày kết thúc</label>
+                <DatePicker
+                  className="form-control"
+                  onChange={handleOnChangeDatePickerToDate}
+                  value={inputValues.toDate}
+                />
+                {/* Tailwind: <DatePicker className="w-full p-2 border rounded-md" ... /> */}
+              </div>
+
+              {/* Type Voucher ID */}
+              {/* <div className="form-group col-md-4">
+                <label htmlFor="typeVoucherId">Loại voucher áp dụng</label>
+                <select
+                  value={inputValues.typeVoucherId}
+                  name="typeVoucherId"
+                  onChange={handleOnChange}
+                  id="typeVoucherId"
+                  className="form-control"
+                >
+                  {dataTypeVoucherList &&
+                    dataTypeVoucherList.map((item, index) => {
+                      const name = `${item.value} ${item.typeVoucherData.value}`;
+                      return (
+                        <option key={index} value={item.id}>
+                          {name}
+                        </option>
+                      );
+                    })}
+                </select>
+              
+              </div> */}
+
+              {/* Amount */}
+              <div className="form-group col-md-6">
+                <label htmlFor="amount">Số lượng mã</label>
+                <input
+                  type="number"
+                  value={inputValues.amount}
+                  name="amount"
+                  onChange={handleOnChange}
+                  className="form-control"
+                  id="amount"
+                />
+                {/* Tailwind: <input type="number" className="w-full p-2 border rounded-md" ... /> */}
+              </div>
+
+              {/* Code Voucher */}
+              <div className="form-group col-md-6">
+                <label htmlFor="codeVoucher">Mã voucher</label>
+                <input
+                  type="text"
+                  value={inputValues.codeVoucher}
+                  name="codeVoucher"
+                  onChange={handleOnChange}
+                  className="form-control"
+                  id="codeVoucher"
+                />
+                {/* Tailwind: <input className="w-full p-2 border rounded-md" ... /> */}
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleSaveVoucher}
+              className="btn btn-primary mt-3"
+            >
+              Lưu thông tin
+            </button>
+            {/* Tailwind: <button className="mt-3 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600" ...>Lưu thông tin</button> */}
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default AddVoucher;

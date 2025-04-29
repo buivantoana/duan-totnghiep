@@ -54,7 +54,8 @@ let createNewProduct = (data) => {
                 if (product) {
                     resolve({
                         errCode: 0,
-                        errMessage: 'ok'
+                        errMessage: 'ok',
+                        id:product.id
                     })
                 }
 
@@ -158,8 +159,7 @@ let getAllProductUser = (data) => {
             if (data.colorId && data.colorId !== 'ALL') {
                 variantWhere['$variants.colorId$'] = data.colorId; // Sử dụng alias của colorId trong mối quan hệ variants
             }
-
-            console.log(variantWhere);
+            
             let objectFilter = {
                 where: { statusId: 'S1' },
                 include: [
@@ -328,7 +328,7 @@ let getDetailProductById = (id) => {
                         { model: db.Allcode, as: 'categoryData', attributes: ['value', 'code'] },
                         { model: db.Allcode, as: 'statusData', attributes: ['value', 'code'] },
                         {
-                            model: db.ProductVariant, as: 'variants', include: [
+                            model: db.ProductVariant, as: 'variants', where: { status: "S1" },include: [
                                 { model: db.Color, as: 'color' },
                                 { model: db.Size, as: 'size' }
                             ]

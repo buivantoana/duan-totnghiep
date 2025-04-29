@@ -68,6 +68,18 @@ const getAllVariants = async (req, res) => {
    }
 };
 
+const getVariantByProductId = async (req, res) => {
+   const { id } = req.params;
+   try {
+      const variant = await productVariantService.getVariantByProductId(id);
+      return res.status(200).json({ code: 200, data: variant });
+   } catch (error) {
+      return res.status(500).json({
+         message: 'Internal Server Error',
+         error: error.message
+      });
+   }
+};
 const getVariantById = async (req, res) => {
    const { id } = req.params;
    try {
@@ -86,5 +98,6 @@ module.exports = {
    updateVariant,
    deleteVariant,
    getAllVariants,
-   getVariantById
+   getVariantById,
+   getVariantByProductId
 };

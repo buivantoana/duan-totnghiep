@@ -94,7 +94,7 @@ const SideBar = () => {
                                         <Link to={'/admin/add-color'} className="nav-link" >Thêm Color</Link>
                                     </nav>
                                 </div>
-                                <a className="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseVariant" aria-expanded="false" aria-controls="collapseLayouts">
+                                {/* <a className="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseVariant" aria-expanded="false" aria-controls="collapseLayouts">
                                     <div className="sb-nav-link-icon"><i className="fas fa-tshirt"></i></div>
                                     Quản lý sản phẩm biến thể
                                     <div className="sb-sidenav-collapse-arrow"><i className="fas fa-angle-down" /></div>
@@ -104,7 +104,7 @@ const SideBar = () => {
                                         <Link to={'/admin/list-product-variant'} className="nav-link" >Danh sách sản phẩm biến thể</Link>
                                         <Link to={'/admin/add-product-variant'} className="nav-link" >Thêm sản phẩm biến thể</Link>
                                     </nav>
-                                </div>
+                                </div> */}
 
                                 <a className="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseBanner" aria-expanded="false" aria-controls="collapseLayouts">
                                     <div className="sb-nav-link-icon"><i className="fab fa-adversal"></i></div>
@@ -157,9 +157,9 @@ const SideBar = () => {
                                 </a>
                                 <div className="collapse" id="collapseVoucher" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                     <nav className="sb-sidenav-menu-nested nav">
-                                        <Link to={'/admin/list-typevoucher'} className="nav-link" >DS loại khuyến mãi</Link>
-                                        <Link to={'/admin/list-voucher'} className="nav-link" >DS mã khuyến mãi</Link>
-                                        <Link to={'/admin/add-typevoucher'} className="nav-link" >Thêm loại khuyến mãi</Link>
+                                        {/* <Link to={'/admin/list-typevoucher'} className="nav-link" >DS loại khuyến mãi</Link> */}
+                                        <Link to={'/admin/list-voucher'} className="nav-link" >DS khuyến mãi</Link>
+                                        {/* <Link to={'/admin/add-typevoucher'} className="nav-link" >Thêm loại khuyến mãi</Link> */}
                                         <Link to={'/admin/add-voucher'} className="nav-link" >Thêm mã khuyến mãi</Link>
                                     </nav>
                                 </div>

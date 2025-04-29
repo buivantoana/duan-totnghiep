@@ -202,6 +202,7 @@ let initwebRoutes = (app) => {
     // ===============API Product Variants===================
     router.get('/api/product-variant', productVariantController.getAllVariants);
     router.get('/api/product-variant/:id', productVariantController.getVariantById);  // Lấy danh sách product-variant
+    router.get('/api/product-variant/product/:id', productVariantController.getVariantByProductId); 
     router.post('/api/product-variant', productVariantController.createVariant);   // Thêm product-variant mới
     router.put('/api/product-variant/:id', productVariantController.updateVariant); // Cập nhật product-variant
     router.delete('/api/product-variant/:id', productVariantController.deleteVariant);

@@ -231,9 +231,7 @@ function DetailOrder(props) {
                                     <div className="wrap-price">
                                         <span className="text-total">Tổng thanh toán {DataOrder && DataOrder.orderDetail && DataOrder.orderDetail.length} sản phẩm: </span>
                                         <span className="text-price">
-                                            {DataOrder && DataOrder.voucherData && DataOrder.voucherId
-                                                ? CommonUtils.formatter.format(totalPriceDiscount(price, DataOrder.voucherData) + priceShip)
-                                                : CommonUtils.formatter.format(price + (+priceShip))}
+                                            {DataOrder && DataOrder.dataVoucher ? CommonUtils.formatter.format(((totalPriceDiscount(price, DataOrder.dataVoucher)) > 0 ? (totalPriceDiscount(price, DataOrder.dataVoucher) + priceShip) : 0) + priceShip) : CommonUtils.formatter.format(price + (+priceShip))}
                                         </span>
                                     </div>
                                 </div>

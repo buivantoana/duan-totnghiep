@@ -206,12 +206,12 @@ function HomePageAdmin(props) {
                                 <Route exact path="/admin/edit-typeship/:id">
                                     <AddTypeShip />
                                 </Route>
-                                <Route exact path="/admin/add-typevoucher">
+                                {/* <Route exact path="/admin/add-typevoucher">
                                     <AddTypeVoucher />
                                 </Route>
                                 <Route exact path="/admin/list-typevoucher">
                                     <ManageTypeVoucher />
-                                </Route>
+                                </Route> */}
                                 <Route exact path="/admin/edit-typevoucher/:id">
                                     <AddTypeVoucher />
                                 </Route>

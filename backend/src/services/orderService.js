@@ -81,7 +81,7 @@ let createNewOrder = (data) => {
                         raw: false
                     })
                     if (user) {
-                        user.points = 0
+                        user.points = user.points-data.points
                         await user.save()
                     }
                 }
@@ -301,6 +301,16 @@ let updateStatusOrder = (data) => {
                         }
                     }
                 }));
+                if(order.points){
+                    let user = await db.User.findOne({
+                        where: { id: order.userId },
+                        raw: false
+                    });
+                    if (user) {
+                        user.points = user.points + order.points;
+                        await user.save();
+                    }
+                }
             }
 
             // Cộng điểm cho người dùng khi status là S6

@@ -130,11 +130,36 @@ const getProductVariantById = async (id) => {
    }
 };
 
+const getVariantByProductId = async (id) => {
+   try {
+      const variant = await ProductVariant.findAll({
+         where: {
+            productId: id
+         },
+         include: [
+            { model: db.Product, as: 'product' },
+            { model: db.Color, as: 'color' },
+            { model: db.Size, as: 'size' }
+        ],
+        raw: true,
+        nest: true,
+      });
+
+      if (!variant) {
+         throw new Error('Product Variant not found');
+      }
+      return variant;
+   } catch (error) {
+      throw error;
+   }
+};
+
 module.exports = {
    checkExistingVariant,
    createProductVariant,
    updateProductVariant,
    deleteProductVariant,
    getAllProductVariants,
-   getProductVariantById
+   getProductVariantById,
+   getVariantByProductId
 };

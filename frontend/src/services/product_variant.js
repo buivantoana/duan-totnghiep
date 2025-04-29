@@ -12,6 +12,16 @@ const productVariantService = {
       }
    },
 
+   getVariantsByProductId: async (id) => {
+      try {
+         const response = await axios.get(`/api/product-variant/product/${id}`);
+         return response.data;
+      } catch (error) {
+         console.error('Error fetching product variants:', error);
+         throw error;
+      }
+   },
+
    // 📌 Lấy chi tiết biến thể sản phẩm theo ID
    getDetailProductVariant: async (id) => {
       try {

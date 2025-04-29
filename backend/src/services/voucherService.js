@@ -40,16 +40,18 @@ let createNewTypeVoucher = (data) => {
                     }
                 }
 
-                await db.TypeVoucher.create({
+                const newTypeVoucher = await db.TypeVoucher.create({
                     typeVoucher: data.typeVoucher,
                     value: data.value,
                     maxValue: data.maxValue,
                     minValue: data.minValue
-                })
+                });
+    
                 resolve({
                     errCode: 0,
-                    errMessage: 'ok'
-                })
+                    errMessage: 'ok',
+                    id: newTypeVoucher.id 
+                });
             }
         } catch (error) {
             reject(error)
