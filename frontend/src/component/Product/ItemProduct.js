@@ -90,7 +90,9 @@ function ItemProduct(props) {
             <div className="single-product">
 
                 <div className="product-img">
-                    <img className="img-fluid w-100" src={props.img} alt={props.name} />
+                    <Link to={`/detail-product/${props.id}`}>
+                        <img className="img-fluid w-100" src={props.img} alt={props.name} />
+                    </Link>
                     <div className="p_icon">
                         <Link to={`/detail-product/${props.id}`}>
                             <a>

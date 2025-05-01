@@ -230,69 +230,72 @@ const Home = () => {
           <Line options={getOptions('Biểu đồ doanh thu theo từng tháng trong năm')} data={dataLine} />
         </div>
         <div className="col-md-4">
-          <form>
-            <div className="form-row">
-              <div className="form-group col-md-8">
-                <label htmlFor="inputZip">Loại thống kê</label>
-                <select value={type} name="type" onChange={(event) => settype(event.target.value)} id="inputState" className="form-control">
-                  <option value="day">Ngày</option>
-                  <option value="month">Tháng</option>
-                  <option value="year">Năm</option>
-                </select>
+          <form >
+            <div style={{ display: "flex", gap: "5px" }}>
+
+              <div style={{ width: "50%" }}>
+                <div className="form-group">
+                  <label htmlFor="inputZip">Loại thống kê</label>
+                  <select value={type} name="type" onChange={(event) => settype(event.target.value)} id="inputState" className="form-control">
+                    <option value="day">Ngày</option>
+                    <option value="month">Tháng</option>
+                    <option value="year">Năm</option>
+                  </select>
+                </div>
               </div>
-            </div>
-            <div className="form-row">
-              {type == "day" &&
-                <>
+              <div style={{ width: "50%" }}>
+                {type == "day" &&
+                  <>
 
-                  <div className="form-group col-md-8">
-                    <DatePicker
-                      showMonthDropdown
-                      showYearDropdown
-                      selectsRange={true}
-                      startDate={startDate}
-                      endDate={endDate}
-                      onChange={(update) => {
-                        setDateRange(update);
-                      }}
-                      className="form-control"
-                      isClearable={true}
-                    />
-                  </div>
-
-
-                </>
-              }
-              {type == "month" &&
-                <>
-                  <div className="form-group col-md-8">
-                    <label htmlFor="inputCity">Chọn tháng</label>
-                    <DatePicker
-                      selected={DateTime}
-                      onChange={(date) => setDateTime(date)}
-                      dateFormat="MM/yyyy"
-                      showMonthYearPicker
-                      className='form-control'
-                    />
-                  </div>
-                </>
-              }
-              {type == "year" &&
-                <>
-                  <div className="form-group col-md-8">
-                    <label htmlFor="inputCity">Chọn năm</label>
-                    <DatePicker
-                      selected={DateTime}
-                      onChange={(date) => setDateTime(date)}
-                      dateFormat="yyyy"
-                      showYearPicker
-                      className='form-control'
-                    />
-                  </div>
-                </>
-              }
+                    <div className="form-group">
+                      <DatePicker
+                        showMonthDropdown
+                        showYearDropdown
+                        selectsRange={true}
+                        startDate={startDate}
+                        endDate={endDate}
+                        onChange={(update) => {
+                          setDateRange(update);
+                        }}
+                        className="form-control"
+                        isClearable={true}
+                      />
+                    </div>
 
 
+                  </>
+                }
+                {type == "month" &&
+                  <>
+                    <div className="form-group">
+                      <label style={{ marginTop: "-2px", zIndex: 10, left: "8px" }} htmlFor="inputCity">Chọn tháng</label>
+                      <DatePicker
+                        selected={DateTime}
+                        onChange={(date) => setDateTime(date)}
+                        dateFormat="MM/yyyy"
+                        showMonthYearPicker
+                        className='form-control'
+                      />
+                    </div>
+                  </>
+                }
+                {type == "year" &&
+                  <>
+                    <div className="form-group">
+                      <label style={{ marginTop: "-2px", zIndex: 10, left: "8px" }} htmlFor="inputCity">Chọn năm</label>
+                      <DatePicker
+                        selected={DateTime}
+                        onChange={(date) => setDateTime(date)}
+                        dateFormat="yyyy"
+                        showYearPicker
+                        className='form-control'
+                      />
+                    </div>
+                  </>
+                }
+
+
+              </div>
             </div>
             <button type="button" onClick={() => handleOnclick()} className="btn btn-primary">Lọc</button>
           </form>
@@ -314,9 +317,9 @@ const Home = () => {
 
       </div>
       <div>
-        <div><ProductOrder/></div>
-        <div><UserOrder/></div>
-        <div><Turnover/></div>
+        <div><ProductOrder /></div>
+        <div><UserOrder /></div>
+        <div><Turnover /></div>
       </div>
     </div>
   )

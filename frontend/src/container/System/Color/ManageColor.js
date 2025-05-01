@@ -1,90 +1,127 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { PAGINATION } from '../../../utils/constant';
-import CommonUtils from '../../../utils/CommonUtils';
 import ReactPaginate from 'react-paginate';
-import FormSearch from '../../../component/Search/FormSearch';
+import CommonUtils from '../../../utils/CommonUtils';
 import colorService from '../../../services/color';
 
-const ManageColor = () => {
-    const [dataColor, setDataColor] = useState([]); // Tất cả dữ liệu
-    const [currentPageData, setCurrentPageData] = useState([]); // Dữ liệu của trang hiện tại
-    const [totalCount, setTotalCount] = useState(0); // Tổng số trang
-    const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
-    const itemsPerPage = 5; // Số lượng item mỗi trang
+// Hàm chuyển đổi chuỗi có dấu thành không dấu
+const removeAccents = (str) => {
+    return str
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/đ/g, 'd')
+        .replace(/Đ/g, 'D');
+};
 
-    // Lấy dữ liệu khi component được render lần đầu
+const ManageColor = () => {
+    const [dataColor, setDataColor] = useState([]);
+    const [currentPageData, setCurrentPageData] = useState([]);
+    const [totalCount, setTotalCount] = useState(0);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [keyword, setKeyword] = useState('');
+    const itemsPerPage = 5;
+
     useEffect(() => {
         fetchData();
     }, []);
 
-    // Lấy dữ liệu tất cả
-    let fetchData = async () => {
+    const fetchData = async () => {
         let arrData = await colorService.getAllColor();
         if (arrData) {
             setDataColor(arrData);
-            setTotalCount(Math.ceil(arrData.length / itemsPerPage)); // Tính số trang
-            setCurrentPageData(arrData.slice(0, itemsPerPage)); // Lấy dữ liệu của trang đầu tiên
+            setTotalCount(Math.ceil(arrData.length / itemsPerPage));
+            setCurrentPageData(arrData.slice(0, itemsPerPage));
         }
     };
 
-    // Xử lý khi xóa màu
-    let handleDeleteColor = async (event, id) => {
+    const handleDeleteColor = async (event, id) => {
         event.preventDefault();
         let res = await colorService.deleteColor(id);
-        if (res && res.code == 200) {
-            toast.success("Thay đổi trạng thái màu thành công");
-            fetchData(); // Tải lại dữ liệu sau khi xóa
+        if (res && res.code === 200) {
+            toast.success('Thay đổi trạng thái màu thành công');
+            fetchData();
         } else {
-            toast.error("Thay đổi trạng thái màu thất bại");
+            toast.error('Thay đổi trạng thái màu thất bại');
         }
     };
 
-    // Xử lý khi thay đổi trang
-    let handleChangePage = (selectedPage) => {
+    const handleChangePage = (selectedPage) => {
         setCurrentPage(selectedPage.selected);
         const offset = selectedPage.selected * itemsPerPage;
         const newData = dataColor.slice(offset, offset + itemsPerPage);
         setCurrentPageData(newData);
     };
 
-    // Xử lý tìm kiếm màu
-    let handleSearchColor = (keyword) => {
-        let filteredData = dataColor.filter(item => item.name.toLowerCase().includes(keyword.toLowerCase()));
+    const handleSearchColor = () => {
+        let filteredData = dataColor;
+        if (keyword) {
+            filteredData = dataColor.filter((item) =>
+                removeAccents(item.name.toLowerCase()).includes(
+                    removeAccents(keyword.toLowerCase())
+                )
+            );
+        }
         setCurrentPageData(filteredData.slice(0, itemsPerPage));
         setTotalCount(Math.ceil(filteredData.length / itemsPerPage));
+        setCurrentPage(0);
     };
 
-    // Xuất danh sách ra Excel
-    let handleOnClickExport = async () => {
+    const handleOnClickExport = async () => {
         if (dataColor) {
-            await CommonUtils.exportExcel(dataColor, "Danh sách màu", "ListColor");
+            await CommonUtils.exportExcel(dataColor, 'Danh sách màu', 'ListColor');
         }
     };
 
     return (
         <div className="container-fluid px-4">
             <h1 className="mt-4">Quản lý Màu Sắc</h1>
-
             <div className="card mb-4">
                 <div className="card-header">
                     <i className="fas fa-palette me-1" />
                     Danh sách Màu Sắc sản phẩm
                 </div>
                 <div className="card-body">
-                    <div className='row'>
-                        <div className='col-4'>
-                            <FormSearch title={"Màu..."} handleSearch={handleSearchColor} />
+                    <div className="row">
+                        <div className="col-4">
+                            <div className="form-group">
+                                <div className="input-group mb-3">
+                                    <input
+                                        onChange={(e) => setKeyword(e.target.value)}
+                                        value={keyword}
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="Tìm kiếm theo Màu..."
+                                    />
+                                    <div className="input-group-append">
+                                        <button
+                                            onClick={handleSearchColor}
+                                            className="btn"
+                                            type="button"
+                                        >
+                                            <i className="ti-search" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div className='col-8'>
-                            <button style={{ float: 'right' }} onClick={handleOnClickExport} className="btn btn-success">
+                        <div className="col-8">
+                            <button
+                                style={{ float: 'right' }}
+                                onClick={handleOnClickExport}
+                                className="btn btn-success"
+                            >
                                 Xuất excel <i className="fa-solid fa-file-excel"></i>
                             </button>
                         </div>
                     </div>
                     <div className="table-responsive">
-                        <table className="table table-bordered" style={{ border: '1' }} width="100%" cellspacing="0">
+                        <table
+                            className="table table-bordered"
+                            style={{ border: '1' }}
+                            width="100%"
+                            cellSpacing="0"
+                        >
                             <thead>
                                 <tr>
                                     <th>STT</th>
@@ -93,30 +130,33 @@ const ManageColor = () => {
                                     <th>Thao tác</th>
                                 </tr>
                             </thead>
-
                             <tbody>
                                 {currentPageData && currentPageData.length > 0 &&
                                     currentPageData.map((item, index) => (
                                         <tr key={index}>
                                             <td>{index + 1}</td>
                                             <td>{item.name}</td>
-                                            <td><input
-                                                style={{ padding: "0px", width: "50px" }}
-                                                type="color"
-                                                value={item.hexCode}
-                                                name="hexCode"
-
-                                                className="form-control"
-                                                id="inputHexCode"
-                                            /></td>
+                                            <td>
+                                                <input
+                                                    style={{ padding: '0px', width: '50px' }}
+                                                    type="color"
+                                                    value={item.hexCode}
+                                                    name="hexCode"
+                                                    className="form-control"
+                                                    id="inputHexCode"
+                                                />
+                                            </td>
                                             <td>
                                                 <Link to={`/admin/edit-color/${item.id}`}>Edit</Link>
-                                                &nbsp; &nbsp;
-                                                <a href="#" onClick={(event) => handleDeleteColor(event, item.id)}>{item.status == "S1" ? "Deactive": "Active"}</a>
+                                                <a
+                                                    href="#"
+                                                    onClick={(event) => handleDeleteColor(event, item.id)}
+                                                >
+                                                    {item.status === 'S1' ? 'Deactive' : 'Active'}
+                                                </a>
                                             </td>
                                         </tr>
-                                    ))
-                                }
+                                    ))}
                             </tbody>
                         </table>
                         <ReactPaginate
@@ -125,15 +165,15 @@ const ManageColor = () => {
                             breakLabel={'...'}
                             pageCount={totalCount}
                             marginPagesDisplayed={3}
-                            containerClassName={"pagination justify-content-center"}
-                            pageClassName={"page-item"}
-                            pageLinkClassName={"page-link"}
-                            previousLinkClassName={"page-link"}
-                            nextClassName={"page-item"}
-                            nextLinkClassName={"page-link"}
-                            breakLinkClassName={"page-link"}
-                            breakClassName={"page-item"}
-                            activeClassName={"active"}
+                            containerClassName={'pagination justify-content-center'}
+                            pageClassName={'page-item'}
+                            pageLinkClassName={'page-link'}
+                            previousLinkClassName={'page-link'}
+                            nextClassName={'page-item'}
+                            nextLinkClassName={'page-link'}
+                            breakLinkClassName={'page-link'}
+                            breakClassName={'page-item'}
+                            activeClassName={'active'}
                             onPageChange={handleChangePage}
                         />
                     </div>

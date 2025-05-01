@@ -81,7 +81,7 @@ let createNewOrder = (data) => {
                         raw: false
                     })
                     if (user) {
-                        user.points = user.points-data.points
+                        user.points = user.points - data.points
                         await user.save()
                     }
                 }
@@ -301,7 +301,7 @@ let updateStatusOrder = (data) => {
                         }
                     }
                 }));
-                if(order.points){
+                if (order.points) {
                     let user = await db.User.findOne({
                         where: { id: order.userId },
                         raw: false
@@ -404,7 +404,12 @@ let getAllOrdersByUser = (userId) => {
                         { model: db.Voucher, as: 'voucherData' },
                         { model: db.Allcode, as: 'statusOrderData' },
                         { model: db.AddressUser, as: 'addressData' },
-                        { model: db.OrderDetail, as: 'OrderDetails' },
+                        {
+                            model: db.OrderDetail, as: 'OrderDetails',
+                            include: [
+                                { model: db.Product, as: 'productOrder' }
+                            ]
+                        },
 
                     ],
                     order: [['createdAt', 'DESC']],

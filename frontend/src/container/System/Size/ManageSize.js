@@ -1,90 +1,116 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { PAGINATION } from '../../../utils/constant';
-import CommonUtils from '../../../utils/CommonUtils';
 import ReactPaginate from 'react-paginate';
-import FormSearch from '../../../component/Search/FormSearch';
 import sizeService from '../../../services/size';
+import CommonUtils from '../../../utils/CommonUtils';
 
 const ManageSize = () => {
-    const [dataSize, setdataSize] = useState([]); // Tất cả dữ liệu
-    const [currentPageData, setCurrentPageData] = useState([]); // Dữ liệu của trang hiện tại
-    const [totalCount, setTotalCount] = useState(0); // Tổng số trang
-    const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
-    const itemsPerPage = 5; // Số lượng item mỗi trang
+    const [dataSize, setDataSize] = useState([]);
+    const [currentPageData, setCurrentPageData] = useState([]);
+    const [totalCount, setTotalCount] = useState(0);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [keyword, setKeyword] = useState(''); // State cho từ khóa tìm kiếm
+    const itemsPerPage = 5;
 
-    // Lấy dữ liệu khi component được render lần đầu
     useEffect(() => {
         fetchData();
     }, []);
 
-    // Lấy dữ liệu tất cả
-    let fetchData = async () => {
+    const fetchData = async () => {
         let arrData = await sizeService.getAllSizes();
         if (arrData) {
-            setdataSize(arrData);
-            setTotalCount(Math.ceil(arrData.length / itemsPerPage)); // Tính số trang
-            setCurrentPageData(arrData.slice(0, itemsPerPage)); // Lấy dữ liệu của trang đầu tiên
+            setDataSize(arrData);
+            setTotalCount(Math.ceil(arrData.length / itemsPerPage));
+            setCurrentPageData(arrData.slice(0, itemsPerPage));
         }
     };
 
-    // Xử lý khi xóa danh mục
-    let handleDeleteCategory = async (event, id) => {
+    const handleDeleteCategory = async (event, id) => {
         event.preventDefault();
         let res = await sizeService.deleteSize(id);
-        if (res && res.code == 200) {
-            toast.success("Thay đổi trạng thái Size thành công");
-            fetchData(); // Tải lại dữ liệu sau khi Thay đổi trạng thái
+        if (res && res.code === 200) {
+            toast.success('Thay đổi trạng thái Size thành công');
+            fetchData();
         } else {
-            toast.error("Thay đổi trạng thái Size thất bại");
+            toast.error('Thay đổi trạng thái Size thất bại');
         }
     };
 
-    // Xử lý khi thay đổi trang
-    let handleChangePage = (selectedPage) => {
+    const handleChangePage = (selectedPage) => {
         setCurrentPage(selectedPage.selected);
         const offset = selectedPage.selected * itemsPerPage;
         const newData = dataSize.slice(offset, offset + itemsPerPage);
         setCurrentPageData(newData);
     };
 
-    // Xử lý tìm kiếm danh mục
-    let handleSearchCategory = (keyword) => {
-        let filteredData = dataSize.filter(item => item.name.toLowerCase().includes(keyword.toLowerCase()));
+    const handleSearchCategory = () => {
+        let filteredData = dataSize;
+        if (keyword) {
+            filteredData = dataSize.filter((item) =>
+                item.name.toLowerCase().includes(keyword.toLowerCase())
+            );
+        }
         setCurrentPageData(filteredData.slice(0, itemsPerPage));
         setTotalCount(Math.ceil(filteredData.length / itemsPerPage));
+        setCurrentPage(0); // Reset về trang đầu khi tìm kiếm
     };
 
-    // Xuất danh sách ra Excel
-    let handleOnClickExport = async () => {
+    const handleOnClickExport = async () => {
         if (dataSize) {
-            await CommonUtils.exportExcel(dataSize, "Danh sách danh mục", "ListCategory");
+            await CommonUtils.exportExcel(dataSize, 'Danh sách danh mục', 'ListCategory');
         }
     };
 
     return (
         <div className="container-fluid px-4">
             <h1 className="mt-4">Quản lý Size</h1>
-
             <div className="card mb-4">
                 <div className="card-header">
                     <i className="fas fa-table me-1" />
                     Danh sách Size sản phẩm
                 </div>
                 <div className="card-body">
-                    <div className='row'>
-                        <div className='col-4'>
-                            <FormSearch title={"Size..."} handleSearch={handleSearchCategory} />
+                    <div className="row">
+                        <div className="col-4">
+                            <div className="form-group">
+                                <div className="input-group mb-3">
+                                    <input
+                                        onChange={(e) => setKeyword(e.target.value)}
+                                        value={keyword}
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="Tìm kiếm theo Size..."
+                                    />
+                                    <div className="input-group-append">
+                                        <button
+                                            onClick={handleSearchCategory}
+                                            className="btn"
+                                            type="button"
+                                        >
+                                            <i className="ti-search" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div className='col-8'>
-                            <button style={{ float: 'right' }} onClick={handleOnClickExport} className="btn btn-success">
+                        <div className="col-8">
+                            <button
+                                style={{ float: 'right' }}
+                                onClick={handleOnClickExport}
+                                className="btn btn-success"
+                            >
                                 Xuất excel <i className="fa-solid fa-file-excel"></i>
                             </button>
                         </div>
                     </div>
                     <div className="table-responsive">
-                        <table className="table table-bordered" style={{ border: '1' }} width="100%" cellspacing="0">
+                        <table
+                            className="table table-bordered"
+                            style={{ border: '1' }}
+                            width="100%"
+                            cellSpacing="0"
+                        >
                             <thead>
                                 <tr>
                                     <th>STT</th>
@@ -92,21 +118,23 @@ const ManageSize = () => {
                                     <th>Thao tác</th>
                                 </tr>
                             </thead>
-
                             <tbody>
                                 {currentPageData && currentPageData.length > 0 &&
                                     currentPageData.map((item, index) => (
                                         <tr key={index}>
                                             <td>{index + 1}</td>
                                             <td>{item.name}</td>
-                                            <td>
-                                                <Link to={`/admin/edit-size/${item.id}`}>Edit</Link>
-                                                &nbsp; &nbsp;
-                                                <a href="#" onClick={(event) => handleDeleteCategory(event, item.id)}>{item.status == "S1" ? "Deactive":"Active"}</a>
+                                            <td >
+                                                <Link to={`/admin/edit-size/${item.id}`} style={{ marginRight: "20px" }}>Edit</Link>
+                                                <a
+                                                    href="#"
+                                                    onClick={(event) => handleDeleteCategory(event, item.id)}
+                                                >
+                                                    {item.status === 'S1' ? 'Deactive' : 'Active'}
+                                                </a>
                                             </td>
                                         </tr>
-                                    ))
-                                }
+                                    ))}
                             </tbody>
                         </table>
                         <ReactPaginate
@@ -115,15 +143,15 @@ const ManageSize = () => {
                             breakLabel={'...'}
                             pageCount={totalCount}
                             marginPagesDisplayed={3}
-                            containerClassName={"pagination justify-content-center"}
-                            pageClassName={"page-item"}
-                            pageLinkClassName={"page-link"}
-                            previousLinkClassName={"page-link"}
-                            nextClassName={"page-item"}
-                            nextLinkClassName={"page-link"}
-                            breakLinkClassName={"page-link"}
-                            breakClassName={"page-item"}
-                            activeClassName={"active"}
+                            containerClassName={'pagination justify-content-center'}
+                            pageClassName={'page-item'}
+                            pageLinkClassName={'page-link'}
+                            previousLinkClassName={'page-link'}
+                            nextClassName={'page-item'}
+                            nextLinkClassName={'page-link'}
+                            breakLinkClassName={'page-link'}
+                            breakClassName={'page-item'}
+                            activeClassName={'active'}
                             onPageChange={handleChangePage}
                         />
                     </div>

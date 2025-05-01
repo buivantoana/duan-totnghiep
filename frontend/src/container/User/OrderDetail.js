@@ -148,7 +148,7 @@ function OrderDetail({ DataOrder, loadDataOrder, isSearch }) {
                                                         <div className='box-item-order'>
                                                             <img src={product.image} alt={product.size} />
                                                             <div className='box-des'>
-                                                                <span className='name'>Sản phẩm ID: {product.productId}</span>
+                                                                <span className='name'>Sản phẩm : {product && product.productOrder && product.productOrder.name}</span>
                                                                 <span className='type'>
                                                                     Size: {product.size} | Màu:
                                                                     <span style={{
