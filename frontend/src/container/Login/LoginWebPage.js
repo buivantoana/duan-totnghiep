@@ -107,6 +107,9 @@ const LoginWebPage = () => {
         if (!inputValues.password) {
             newErrors.password = 'Mật khẩu không được để trống';
             isValid = false;
+        } else if (inputValues.password.length < 6) {
+            newErrors.password = 'Mật khẩu phải có ít nhất 6 ký tự';
+            isValid = false;
         }
 
         const passwordCon = document.getElementById('passwordCon').value;
