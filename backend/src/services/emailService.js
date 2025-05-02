@@ -15,7 +15,7 @@ let sendSimpleEmail = async (dataSend) => {
         let info = await transporter.sendMail({
             from: '"BiNgo2706 👻" <dotanthanhvlog@gmail.com>', // sender address
             to: dataSend.email, // list of receivers
-            subject: "Xác thực email | PTITSHOP", // Subject line
+            subject: "Xác thực email | Sneaker Hubs", // Subject line
             html: getBodyHTMLEmailVerify(dataSend)
         });
     }
@@ -23,7 +23,7 @@ let sendSimpleEmail = async (dataSend) => {
         let info = await transporter.sendMail({
             from: '"BiNgo2706 👻" <dotanthanhvlog@gmail.com>', // sender address
             to: dataSend.email, // list of receivers
-            subject: "Xác nhận quên mật khẩu | PTITSHOP", // Subject line
+            subject: "Xác nhận quên mật khẩu | Sneaker Hubs", // Subject line
             html: getBodyHTMLEmailForgotPassword(dataSend)
         });
     }

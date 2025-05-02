@@ -144,7 +144,7 @@ const Header = props => {
                         </button>
                         <div className="collapse navbar-collapse offset w-100" id="navbarSupportedContent">
                             <div className="row w-100 mr-0">
-                                <div className="col-lg-9 pr-0" style={{ width: "80%" }}>
+                                <div className="col-lg-9 pr-0" style={{ width: "90%" }}>
                                     <ul className="nav navbar-nav center_nav pull-right">
                                         <li className="nav-item">
                                             <NavLink exact to="/" style={{ fontWeight: "bold" }} className="nav-link"
@@ -182,10 +182,10 @@ const Header = props => {
                                             <form onSubmit={handleSearch} style={{ display: "flex", gap: "5px" }}>
                                                 <input
                                                     type="text"
-                                                    placeholder="Tìm kiếm đơn hàng..."
+                                                    placeholder="Tìm kiếm đơn hàng theo ID,Email,Phone,..."
                                                     value={searchTerm}
                                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                                    style={{ padding: "4px 8px", borderRadius: "4px", border: "1px solid #ccc" }}
+                                                    style={{ padding: "4px 8px", borderRadius: "4px", border: "1px solid #ccc", fontSize: "13px", width: "300px" }}
                                                 />
                                                 <button
                                                     type="submit"
@@ -205,7 +205,7 @@ const Header = props => {
                                     </ul>
                                 </div>
 
-                                <div className="col-lg-3 pr-0" style={{ width: "20%" }}>
+                                <div className="col-lg-3 pr-0" style={{ width: "10%" }}>
 
                                     <ul className="nav navbar-nav navbar-right right_nav pull-right">
 

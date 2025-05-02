@@ -14,22 +14,24 @@ const LoginWebPage = () => {
     const [inputValues, setInputValues] = useState({
         email: '', password: 'passwordsecrect', lastName: '', phonenumber: '', isOpen: false, dataUser: {}
     });
+    const [errors, setErrors] = useState({
+        email: '', password: '', lastName: '', phonenumber: '', passwordCon: ''
+    });
     const [isLogin, setIsLogin] = useState(false);
     const [isForgotPassword, setIsForgotPassword] = useState(false);
-    const [loading, setLoading] = useState(false)
-    const [forgotPasswordStep, setForgotPasswordStep] = useState(1); // 1: Nhập email, 3: Reset password
+    const [loading, setLoading] = useState(false);
+    const [forgotPasswordStep, setForgotPasswordStep] = useState(1);
     const [forgotPasswordData, setForgotPasswordData] = useState({
-        email: '',
-        newPassword: '',
-        confirmPassword: '',
-        token: '',
-        userId: ''
+        email: '', newPassword: '', confirmPassword: '', token: '', userId: ''
     });
+    const [forgotErrors, setForgotErrors] = useState({
+        email: '', newPassword: '', confirmPassword: ''
+    });
+
     let history = useHistory();
     let location = useLocation();
 
     useEffect(() => {
-        // Kiểm tra query params trong URL
         const searchParams = new URLSearchParams(location.search);
         const token = searchParams.get('token');
         const userId = searchParams.get('userId');
@@ -45,17 +47,133 @@ const LoginWebPage = () => {
         }
     }, [location]);
 
+    const validateEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
+    const validatePhoneNumber = (phone) => {
+        // Vietnam phone number: starts with +84 or 0, followed by 9-10 digits, valid mobile prefixes
+        const phoneRegex = /^(?:\+84|0)(?:3[2-9]|5[2689]|7[0|6-9]|8[1-9]|9[0-9])[0-9]{7}$/;
+        return phoneRegex.test(phone);
+    };
+
+    const validateLoginForm = () => {
+        let isValid = true;
+        const newErrors = { email: '', password: '' };
+
+        if (!inputValues.email) {
+            newErrors.email = 'Email không được để trống';
+            isValid = false;
+        } else if (!validateEmail(inputValues.email)) {
+            newErrors.email = 'Email không đúng định dạng';
+            isValid = false;
+        }
+
+        if (!inputValues.password) {
+            newErrors.password = 'Mật khẩu không được để trống';
+            isValid = false;
+        }
+
+        setErrors(newErrors);
+        return isValid;
+    };
+
+    const validateRegisterForm = () => {
+        let isValid = true;
+        const newErrors = { email: '', lastName: '', phonenumber: '', password: '', passwordCon: '' };
+
+        if (!inputValues.email) {
+            newErrors.email = 'Email không được để trống';
+            isValid = false;
+        } else if (!validateEmail(inputValues.email)) {
+            newErrors.email = 'Email không đúng định dạng';
+            isValid = false;
+        }
+
+        if (!inputValues.lastName) {
+            newErrors.lastName = 'Họ và tên không được để trống';
+            isValid = false;
+        }
+
+        if (!inputValues.phonenumber) {
+            newErrors.phonenumber = 'Số điện thoại không được để trống';
+            isValid = false;
+        } else if (!validatePhoneNumber(inputValues.phonenumber)) {
+            newErrors.phonenumber = 'Số điện thoại không đúng định dạng Việt Nam';
+            isValid = false;
+        }
+
+        if (!inputValues.password) {
+            newErrors.password = 'Mật khẩu không được để trống';
+            isValid = false;
+        }
+
+        const passwordCon = document.getElementById('passwordCon').value;
+        if (!passwordCon) {
+            newErrors.passwordCon = 'Xác nhận mật khẩu không được để trống';
+            isValid = false;
+        } else if (passwordCon !== inputValues.password) {
+            newErrors.passwordCon = 'Xác nhận mật khẩu không khớp';
+            isValid = false;
+        }
+
+        setErrors(newErrors);
+        return isValid;
+    };
+
+    const validateForgotPasswordEmail = () => {
+        let isValid = true;
+        const newErrors = { email: '' };
+
+        if (!forgotPasswordData.email) {
+            newErrors.email = 'Email không được để trống';
+            isValid = false;
+        } else if (!validateEmail(forgotPasswordData.email)) {
+            newErrors.email = 'Email không đúng định dạng';
+            isValid = false;
+        }
+
+        setForgotErrors(newErrors);
+        return isValid;
+    };
+
+    const validateResetPassword = () => {
+        let isValid = true;
+        const newErrors = { newPassword: '', confirmPassword: '' };
+
+        if (!forgotPasswordData.newPassword) {
+            newErrors.newPassword = 'Mật khẩu mới không được để trống';
+            isValid = false;
+        }
+
+        if (!forgotPasswordData.confirmPassword) {
+            newErrors.confirmPassword = 'Xác nhận mật khẩu không được để trống';
+            isValid = false;
+        } else if (forgotPasswordData.confirmPassword !== forgotPasswordData.newPassword) {
+            newErrors.confirmPassword = 'Xác nhận mật khẩu không khớp';
+            isValid = false;
+        }
+
+        setForgotErrors(newErrors);
+        return isValid;
+    };
+
     const handleOnChange = event => {
         const { name, value } = event.target;
         setInputValues({ ...inputValues, [name]: value });
+        setErrors({ ...errors, [name]: '' }); // Clear error on change
     };
 
     const handleForgotPasswordChange = event => {
         const { name, value } = event.target;
         setForgotPasswordData({ ...forgotPasswordData, [name]: value });
+        setForgotErrors({ ...forgotErrors, [name]: '' }); // Clear error on change
     };
 
     let handleLogin = async () => {
+        if (!validateLoginForm()) return;
+
         let res = await handleLoginService({
             email: inputValues.email,
             password: inputValues.password
@@ -94,6 +212,8 @@ const LoginWebPage = () => {
     };
 
     let handleSaveUser = async () => {
+        if (!validateRegisterForm()) return;
+
         let res = await checkPhonenumberEmail({
             phonenumber: inputValues.phonenumber,
             email: inputValues.email
@@ -180,32 +300,29 @@ const LoginWebPage = () => {
             });
     };
 
-    // Forgot Password Handlers
     const handleSendCode = async () => {
-        setLoading(true)
+        if (!validateForgotPasswordEmail()) return;
+
+        setLoading(true);
         try {
-            // Placeholder: Gọi API gửi email chứa link với token và userId
             const res = await sendForgotPassword(forgotPasswordData.email);
             if (res && res.errCode === 0) {
                 toast.success("Link đặt lại mật khẩu đã được gửi đến email của bạn");
-                setForgotPasswordStep(1); // Giữ ở bước 1, chờ người dùng click link
+                setForgotPasswordStep(1);
             } else {
                 toast.error(res.errMessage);
             }
         } catch (error) {
             toast.error("Đã xảy ra lỗi, vui lòng thử lại");
         }
-        setLoading(false)
+        setLoading(false);
     };
 
     const handleResetPassword = async () => {
-        setLoading(true)
-        if (forgotPasswordData.newPassword !== forgotPasswordData.confirmPassword) {
-            toast.error("Mật khẩu xác nhận không khớp");
-            return;
-        }
+        if (!validateResetPassword()) return;
+
+        setLoading(true);
         try {
-            // Placeholder: Gọi API reset password với token và userId
             const res = await resetPassword({
                 token: forgotPasswordData.token,
                 id: forgotPasswordData.userId,
@@ -222,7 +339,7 @@ const LoginWebPage = () => {
         } catch (error) {
             toast.error("Đã xảy ra lỗi, vui lòng thử lại");
         }
-        setLoading(false)
+        setLoading(false);
     };
 
     return (
@@ -250,10 +367,12 @@ const LoginWebPage = () => {
                                             <div className="form-group">
                                                 <label htmlFor="loginemail">Địa chỉ email</label>
                                                 <input name="email" onChange={(event) => handleOnChange(event)} type="email" id="loginemail" required />
+                                                {errors.email && <span className="error" style={{ color: 'red', fontSize: '12px' }}>{errors.email}</span>}
                                             </div>
                                             <div className="form-group">
                                                 <label htmlFor="loginPassword">Mật khẩu</label>
                                                 <input name="password" onChange={(event) => handleOnChange(event)} type="password" id="loginPassword" required />
+                                                {errors.password && <span className="error" style={{ color: 'red', fontSize: '12px' }}>{errors.password}</span>}
                                             </div>
                                             <div className="CTA">
                                                 <input onClick={() => handleLogin()} type="submit" style={{ borderRadius: "10px" }} value="Đăng nhập" />
@@ -269,27 +388,28 @@ const LoginWebPage = () => {
                                         <div className="">
                                             <div className="form-group">
                                                 <label htmlFor="name">Họ và tên</label>
-                                                <input type="text" name="lastName" onChange={(event) => handleOnChange(event)} scal id="name" className="name" />
-                                                <span className="error" />
+                                                <input type="text" name="lastName" onChange={(event) => handleOnChange(event)} id="name" className="name" />
+                                                {errors.lastName && <span className="error" style={{ color: 'red', fontSize: '12px' }}>{errors.lastName}</span>}
                                             </div>
                                             <div className="form-group">
                                                 <label htmlFor="email">Địa chỉ email</label>
                                                 <input type="email" name="email" onChange={(event) => handleOnChange(event)} id="email" className="email" />
-                                                <span className="error" />
+                                                {errors.email && <span className="error" style={{ color: 'red', fontSize: '12px' }}>{errors.email}</span>}
                                             </div>
                                             <div className="form-group">
                                                 <label htmlFor="phone">Số điện thoại</label>
                                                 <input type="text" name="phonenumber" onChange={(event) => handleOnChange(event)} id="phone" />
+                                                {errors.phonenumber && <span className="error" style={{ color: 'red', fontSize: '12px' }}>{errors.phonenumber}</span>}
                                             </div>
                                             <div className="form-group">
                                                 <label htmlFor="password">Mật khẩu</label>
                                                 <input type="password" name="password" onChange={(event) => handleOnChange(event)} id="password" className="pass" />
-                                                <span className="error" />
+                                                {errors.password && <span className="error" style={{ color: 'red', fontSize: '12px' }}>{errors.password}</span>}
                                             </div>
                                             <div className="form-group">
                                                 <label htmlFor="passwordCon">Xác nhận mật khẩu</label>
                                                 <input type="password" name="passwordCon" id="passwordCon" className="passConfirm" />
-                                                <span className="error" />
+                                                {errors.passwordCon && <span className="error" style={{ color: 'red', fontSize: '12px' }}>{errors.passwordCon}</span>}
                                             </div>
                                             <div className="CTA">
                                                 <input onClick={() => handleSaveUser()} style={{ borderRadius: "10px" }} type="submit" value="Lưu" id="submit" />
@@ -328,6 +448,7 @@ const LoginWebPage = () => {
                                             <div className="form-group">
                                                 <label htmlFor="forgotEmail">Địa chỉ email</label>
                                                 <input name="email" onChange={(event) => handleForgotPasswordChange(event)} type="email" id="forgotEmail" required />
+                                                {forgotErrors.email && <span className="error" style={{ color: 'red', fontSize: '12px' }}>{forgotErrors.email}</span>}
                                             </div>
                                             <div className="CTA">
                                                 <input onClick={() => handleSendCode()} type="submit" style={{ borderRadius: "10px" }} value="Gửi link đặt lại" />
@@ -339,10 +460,12 @@ const LoginWebPage = () => {
                                             <div className="form-group">
                                                 <label htmlFor="newPassword">Mật khẩu mới</label>
                                                 <input name="newPassword" onChange={(event) => handleForgotPasswordChange(event)} type="password" id="newPassword" required />
+                                                {forgotErrors.newPassword && <span className="error" style={{ color: 'red', fontSize: '12px' }}>{forgotErrors.newPassword}</span>}
                                             </div>
                                             <div className="form-group">
                                                 <label htmlFor="confirmPassword">Xác nhận mật khẩu</label>
                                                 <input name="confirmPassword" onChange={(event) => handleForgotPasswordChange(event)} type="password" id="confirmPassword" required />
+                                                {forgotErrors.confirmPassword && <span className="error" style={{ color: 'red', fontSize: '12px' }}>{forgotErrors.confirmPassword}</span>}
                                             </div>
                                             <div className="CTA">
                                                 <input onClick={() => handleResetPassword()} type="submit" style={{ borderRadius: "10px" }} value="Đặt lại mật khẩu" />
