@@ -37,7 +37,7 @@ function ShopCartPage(props) {
                 limit: '',
                 offset: '',
                 keyword: '',
-                type:true
+                type: true
             })
             if (res && res.errCode === 0) {
                 settypeShip(res.data)
@@ -124,7 +124,7 @@ function ShopCartPage(props) {
                         <table className="table">
                             <thead>
                                 <tr>
-                                <th scope="col">Ảnh sản phẩm</th>
+                                    <th scope="col">Ảnh sản phẩm</th>
                                     <th scope="col">  Tên sản phẩm</th>
                                     <th scope="col"> Size</th>
                                     <th scope="col"> Màu</th>
@@ -192,7 +192,14 @@ function ShopCartPage(props) {
                     <div className="content-right">
                         <div className="wrap-price">
                             <span className="text-total">Tổng thanh toán ({dataCart && dataCart.length} sản phẩm): </span>
-                            <span className="text-price">{dataVoucher && dataVoucher.voucherData ? CommonUtils.formatter.format(((totalPriceDiscount(price, dataVoucher))>0?(totalPriceDiscount(price, dataVoucher) + priceShip):0)+priceShip) : CommonUtils.formatter.format(price + (+priceShip))}</span>
+                            <span className="text-price">
+                                {CommonUtils.formatter.format(
+                                    (dataVoucher && dataVoucher.voucherData
+                                        ? (totalPriceDiscount(price, dataVoucher) > 0 ? totalPriceDiscount(price, dataVoucher) : 0)
+                                        : price)
+                                    + (+priceShip)
+                                )}
+                            </span>
                         </div>
 
                         <div className="checkout_btn_inner">

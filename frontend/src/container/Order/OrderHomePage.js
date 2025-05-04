@@ -62,7 +62,6 @@ function OrderHomePage(props) {
     let total = 0;
     const [stt, setstt] = useState(0)
     let dataCart = useSelector(state => state.shopcart.listCartItem)
-    console.log(dataCart)
     let dataVoucher = useSelector(state => state.shopcart.dataVoucher)
     let dataTypeShip = useSelector(state => state.shopcart.dataTypeShip)
     const [isChangeAdress, setisChangeAdress] = useState(false)
@@ -74,7 +73,7 @@ function OrderHomePage(props) {
     const [note, setnote] = useState('');
     const [points, setPoints] = useState(0);
     const [pointsToApply, setPointsToApply] = useState(0);
-    
+
     useEffect(() => {
         dispatch(getItemCartStart(userId))
         let fetchDataAddress = async () => {
@@ -99,21 +98,20 @@ function OrderHomePage(props) {
         }
     }, [])
 
-
     useEffect(() => {
         if (userId) {
-           (async () => {
-              try {
-                 let user = await getDetailUserById(userId)
-                 if (user && user.errCode === 0) {
-                    setPointsToApply(user.data.points)
-                 }
-              } catch (error) {
-  
-              }
-           })()
+            (async () => {
+                try {
+                    let user = await getDetailUserById(userId)
+                    if (user && user.errCode === 0) {
+                        setPointsToApply(user.data.points)
+                    }
+                } catch (error) {
+
+                }
+            })()
         }
-     }, [userId])
+    }, [userId])
     let loadDataAddress = async (userId) => {
         let res = await getAllAddressUserByUserIdService(userId)
         if (res && res.errCode === 0) {
@@ -121,15 +119,15 @@ function OrderHomePage(props) {
             setaddressUserId(res.data[0].id)
         }
     }
-    
+
     let closeModaAddressUser = () => {
         setisOpenModalAddressUser(false)
     }
-    
+
     let handleOpenAddressUserModal = async () => {
         setisOpenModalAddressUser(true)
     }
-    
+
     let sendDataFromModalAddress = async (data) => {
         setisOpenModalAddressUser(false)
         let res = await createNewAddressUserrService({
@@ -146,24 +144,24 @@ function OrderHomePage(props) {
             toast.error(res.errMessage)
         }
     }
-    
+
     let handleOnChange = (id, index) => {
         setaddressUserId(id)
         setstt(index)
     }
-    
+
     let handleOpenModal = () => {
         setisOpenModal(true)
     }
-    
+
     let closeModal = () => {
         setisOpenModal(false)
     }
-    
+
     let closeModalFromVoucherItem = () => {
         setisOpenModal(false)
     }
-    
+
     let totalPriceDiscount = (price, discount) => {
         if (discount.voucherData.typeVoucherOfVoucherData.typeVoucher === "percent") {
             if (((price * discount.voucherData.typeVoucherOfVoucherData.value) / 100) > discount.voucherData.typeVoucherOfVoucherData.maxValue) {
@@ -175,17 +173,17 @@ function OrderHomePage(props) {
             return price - discount.voucherData.typeVoucherOfVoucherData.maxValue
         }
     }
-    
+
     let handleChooseTypeShip = (item) => {
         dispatch(ChooseTypeShipStart(item))
         setpriceShip(item.price)
     }
-    
+
     let fetchExchangeRate = async () => {
         let res = await getExchangeRate()
         if (res) setratesData(res)
     }
-    
+
     let handleSaveOrder = async () => {
         if (!dataTypeShip.id) {
             toast.error("Chưa chọn đơn vị vận chuyển")
@@ -202,6 +200,11 @@ function OrderHomePage(props) {
                 result.push(object)
             })
 
+            const basePrice = dataVoucher && dataVoucher.voucherData
+                ? (totalPriceDiscount(price, dataVoucher) > 0 ? totalPriceDiscount(price, dataVoucher) : 0)
+                : price;
+            const totalPrice = Math.max(basePrice + (+priceShip) - points, 0);
+
             if (activeTypePayment == 0) {
                 let res = await createNewOrderService({
                     orderdate: Date.now(),
@@ -213,14 +216,7 @@ function OrderHomePage(props) {
                     userId: userId,
                     arrDataShopCart: result,
                     points: points,
-                    total: dataVoucher && dataVoucher.voucherData
-                        ? Math.max(
-                            ((totalPriceDiscount(price, dataVoucher) > 0
-                                ? (totalPriceDiscount(price, dataVoucher) + priceShip)
-                                : 0) + priceShip - points),
-                            0
-                        )
-                        : Math.max(price + (+priceShip) - points, 0)
+                    total: totalPrice
                 })
                 if (res && res.errCode === 0) {
                     toast.success("Đặt hàng thành công")
@@ -232,15 +228,7 @@ function OrderHomePage(props) {
                     toast.error(res.errMessage)
                 }
             } else {
-                total = dataVoucher && dataVoucher.voucherData
-                    ? Math.max(
-                        ((totalPriceDiscount(price, dataVoucher) > 0
-                            ? (totalPriceDiscount(price, dataVoucher) + priceShip)
-                            : 0) + priceShip - points),
-                        0
-                    )
-                    : Math.max(price + (+priceShip) - points, 0)
-                total = parseFloat((total / EXCHANGE_RATES.USD).toFixed(2))
+                total = parseFloat((totalPrice / EXCHANGE_RATES.USD).toFixed(2))
                 if (activeTypeOnlPayment === 1) {
                     let res = await paymentOrderService({
                         total: total,
@@ -276,14 +264,7 @@ function OrderHomePage(props) {
                             userId: userId,
                             points: points,
                             arrDataShopCart: result,
-                            total: dataVoucher && dataVoucher.voucherData
-                                ? Math.max(
-                                    ((totalPriceDiscount(price, dataVoucher) > 0
-                                        ? (totalPriceDiscount(price, dataVoucher) + priceShip)
-                                        : 0) + priceShip - points),
-                                    0
-                                )
-                                : Math.max(price + (+priceShip) - points, 0)
+                            total: totalPrice
                         },
                     })
                 }
@@ -437,7 +418,16 @@ function OrderHomePage(props) {
                                 <div className="content-right">
                                     <div className="wrap-price">
                                         <span className="text-total">Tổng thanh toán ({dataCart && dataCart.length} sản phẩm): </span>
-                                        <span className="text-price">{dataVoucher && dataVoucher.voucherData ? CommonUtils.formatter.format(((totalPriceDiscount(price, dataVoucher)) > 0 ? (totalPriceDiscount(price, dataVoucher) + priceShip) : 0) + priceShip) : CommonUtils.formatter.format(price + (+priceShip))}</span>
+                                        <span className="text-price">
+                                            {CommonUtils.formatter.format(
+                                                Math.max(
+                                                    (dataVoucher && dataVoucher.voucherData
+                                                        ? (totalPriceDiscount(price, dataVoucher) > 0 ? totalPriceDiscount(price, dataVoucher) : 0)
+                                                        : price) + (+priceShip) - points,
+                                                    0
+                                                )
+                                            )}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -460,11 +450,11 @@ function OrderHomePage(props) {
                     </div>
                     <div className="content-bottom">
                         <div className="wrap-bottom">
-                            {JSON.parse(localStorage.getItem("userData")) && 
-                                <ApplyPointsInput 
-                                    userId={userId} 
-                                    onApplyPoints={handleApplyPoints} 
-                                    userPoints={pointsToApply} 
+                            {JSON.parse(localStorage.getItem("userData")) &&
+                                <ApplyPointsInput
+                                    userId={userId}
+                                    onApplyPoints={handleApplyPoints}
+                                    userPoints={pointsToApply}
                                 />
                             }
                             <div className="box-flex">
@@ -481,20 +471,16 @@ function OrderHomePage(props) {
                             </div>
                             <div className="box-flex">
                                 <div className="head">Tổng thanh toán:</div>
-                                <div className="money">${
-                                    dataVoucher && dataVoucher.voucherData
-                                        ? CommonUtils.formatter.format(
-                                            Math.max(
-                                                ((totalPriceDiscount(price, dataVoucher) > 0
-                                                    ? (totalPriceDiscount(price, dataVoucher) + priceShip)
-                                                    : 0) + priceShip - points),
-                                                0
-                                            )
+                                <div className="money">
+                                    {CommonUtils.formatter.format(
+                                        Math.max(
+                                            (dataVoucher && dataVoucher.voucherData
+                                                ? (totalPriceDiscount(price, dataVoucher) > 0 ? totalPriceDiscount(price, dataVoucher) : 0)
+                                                : price) + (+priceShip) - points,
+                                            0
                                         )
-                                        : CommonUtils.formatter.format(
-                                            Math.max(price + (+priceShip) - points, 0)
-                                        )
-                                }</div>
+                                    )}
+                                </div>
                             </div>
                             <div className="box-flex">
                                 <a onClick={() => handleSaveOrder()} className="main_btn">Đặt hàng</a>

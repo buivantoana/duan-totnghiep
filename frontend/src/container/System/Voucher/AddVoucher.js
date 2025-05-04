@@ -117,7 +117,6 @@ const AddVoucher = () => {
       'minValue',
       'fromDate',
       'toDate',
-      'typeVoucherId',
       'amount',
       'codeVoucher',
     ];
